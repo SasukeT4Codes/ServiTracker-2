@@ -3,6 +3,7 @@
 {% block content %}
 <h2 class="text-blue-dark">Panel de Control</h2>
 
+<!-- Contadores -->
 <div class="row">
     <div class="col-md-4">
         <div class="card shadow-sm mb-3">
@@ -32,8 +33,9 @@
 
 <hr>
 
+<!-- Estadísticas por ciudad -->
 <h3 class="text-blue-mid">Estadísticas por ciudad</h3>
-<table class="table table-striped">
+<table class="table table-striped mb-5">
     <thead>
         <tr>
             <th>Ciudad</th>
@@ -50,6 +52,39 @@
         </tr>
         {% empty %}
         <tr><td colspan="3">No hay datos disponibles.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<!-- Listado de PQR pendientes con botón de asignar -->
+<h3 class="text-blue-mid">PQR Pendientes</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Propiedad</th>
+            <th>Ciudadano</th>
+            <th>Tipo de falla</th>
+            <th>Descripción</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in pqr_pendientes %}
+        <tr>
+            <td>{{ pqr.id }}</td>
+            <td>{{ pqr.propiedad }}</td>
+            <td>{{ pqr.ciudadano }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.descripcion }}</td>
+            <td>
+                <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-sm btn-blue-mid">Asignar técnico</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay PQR pendientes.</td></tr>
         {% endfor %}
     </tbody>
 </table>

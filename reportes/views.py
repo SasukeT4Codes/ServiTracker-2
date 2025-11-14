@@ -5,9 +5,8 @@ from pqr.models import PQR
 # 📊 Dashboard principal (solo administradores y agentes)
 @login_required
 def dashboard(request):
-    # Verificar rol del usuario
-    if request.user.rol not in ['administrador', 'agente']:
-        # Si no tiene permiso, lo redirigimos al inicio
+    # Solo agentes y administradores
+    if request.user.rol not in ["agente", "administrador"]:
         return redirect('index')
 
     # Contadores por estado
@@ -27,10 +26,14 @@ def dashboard(request):
             elif pqr.estado.nombre == "Resuelto":
                 estadisticas_ciudad[ciudad]["resueltos"] += 1
 
+    # Listado de PQR pendientes
+    pqr_pendientes = PQR.objects.filter(estado__nombre="Pendiente")
+
     contexto = {
         "pendientes": pendientes,
         "en_curso": en_curso,
         "resueltos": resueltos,
         "estadisticas_ciudad": estadisticas_ciudad,
+        "pqr_pendientes": pqr_pendientes,
     }
     return render(request, 'reportes/dashboard.html', contexto)
