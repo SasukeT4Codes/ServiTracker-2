@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Mis Asignaciones{% endblock %}
+{% block content %}
+<h2 class="text-blue-dark">Mis Asignaciones</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Propiedad</th>
+            <th>Ciudadano</th>
+            <th>Tipo de falla</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in asignaciones %}
+        <tr>
+            <td>{{ pqr.id }}</td>
+            <td>{{ pqr.propiedad }}</td>
+            <td>{{ pqr.ciudadano }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.descripcion }}</td>
+            <td>{{ pqr.estado }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No tienes asignaciones pendientes.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import PQR, EstadoPQR
-from .forms import PQRForm
+from .forms import PQRForm, AsignarTecnicoForm
 
-# 📋 Listar PQR del usuario
+# 📋 Listar PQR del ciudadano
 @login_required
 def lista_pqr(request):
     pqr_list = PQR.objects.filter(ciudadano=request.user)
@@ -31,7 +31,7 @@ def crear_pqr(request):
 def editar_pqr(request, pk):
     pqr = get_object_or_404(PQR, pk=pk, ciudadano=request.user)
     if pqr.estado.nombre != "Pendiente":
-        return redirect('lista_pqr')  # no se puede editar si ya está en curso o resuelto
+        return redirect('lista_pqr')
     if request.method == 'POST':
         form = PQRForm(request.POST, instance=pqr)
         if form.is_valid():
@@ -51,3 +51,31 @@ def eliminar_pqr(request, pk):
         pqr.delete()
         return redirect('lista_pqr')
     return render(request, 'pqr/eliminar.html', {'pqr': pqr})
+
+# 🔧 Vista para técnicos: Mis asignaciones
+@login_required
+def mis_asignaciones(request):
+    if request.user.rol != "tecnico":
+        return redirect('index')  # solo técnicos pueden entrar
+    asignaciones = PQR.objects.filter(tecnico_asignado=request.user)
+    return render(request, 'pqr/mis_asignaciones.html', {'asignaciones': asignaciones})
+
+# 🛠️ Vista para agentes/administradores: asignar técnico a un PQR
+@login_required
+def asignar_tecnico(request, pk):
+    if request.user.rol not in ["agente", "administrador"]:
+        return redirect('index')  # solo agentes y administradores pueden asignar
+
+    pqr = get_object_or_404(PQR, pk=pk)
+    if request.method == 'POST':
+        form = AsignarTecnicoForm(request.POST, instance=pqr)
+        if form.is_valid():
+            pqr = form.save(commit=False)
+            # Cambiamos estado a "En curso"
+            estado_en_curso = EstadoPQR.objects.get(nombre="En curso")
+            pqr.estado = estado_en_curso
+            pqr.save()
+            return redirect('dashboard')
+    else:
+        form = AsignarTecnicoForm(instance=pqr)
+    return render(request, 'pqr/asignar_tecnico.html', {'form': form, 'pqr': pqr})
