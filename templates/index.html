@@ -5,26 +5,40 @@
 {% block title %}Inicio | ServiTracker{% endblock %}
 
 {% block content %}
-<!-- Bienvenida -->
+
 <section id="inicio" class="text-center my-5">
     <img src="{% static 'img/ESSA-logo.png' %}" alt="ESSA Logo" class="mb-3" style="max-width:150px;">
-    <h2 class="text-blue-dark">Bienvenido a ServiTracker</h2>
-    <p class="lead">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
-    <div class="d-flex justify-content-center gap-3 mt-3">
-        <a href="{% url 'login' %}" class="btn btn-blue-mid">Iniciar sesión</a>
-        <a href="/pqr/rapida" class="btn btn-orange-dark">PQR rápida</a>
-    </div>
+    {% if user.is_authenticated %}
+        <h2 class="text-blue-dark">Bienvenido {{ user.get_full_name|default:"Usuario" }}</h2>
+        <p class="lead">Accede a tu panel para gestionar tus reportes.</p>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            {% if user.rol == "administrador" or user.rol == "agente" %}
+                <a href="{% url 'dashboard' %}" class="btn btn-blue-mid">Ir al Dashboard</a>
+            {% elif user.rol == "ciudadano" %}
+                <a href="{% url 'lista_pqr' %}" class="btn btn-blue-mid">Mis PQR</a>
+            {% elif user.rol == "tecnico" %}
+                <a href="{% url 'mis_asignaciones' %}" class="btn btn-blue-mid">Mis asignaciones</a>
+            {% else %}
+                <a href="{% url 'perfil' %}" class="btn btn-blue-mid">Mi perfil</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <h2 class="text-blue-dark">Bienvenido a ServiTracker</h2>
+        <p class="lead">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <a href="{% url 'login' %}" class="btn btn-blue-mid">Iniciar sesión</a>
+            <a href="/pqr/rapida" class="btn btn-orange-dark">PQR rápida</a>
+        </div>
+    {% endif %}
 </section>
 
 <hr>
 
-<!-- Nosotros -->
 <section id="nosotros" class="my-5">
     <h3 class="text-blue-mid">¿Quiénes somos?</h3>
-    <p>ServiTracker es una plataforma pensada para mejorar la comunicación entre ciudadanos y empresas de servicios públicos. Nuestro objetivo es facilitar el reporte y seguimiento de fallas.</p>
+    <p>ServiTracker mejora la comunicación entre ciudadanos y empresas de servicios públicos, facilitando el reporte y seguimiento de fallas.</p>
 </section>
 
-<!-- Servicios -->
 <section id="servicios" class="my-5">
     <h3 class="text-blue-mid text-center mb-4">Servicios</h3>
     <div class="row text-center">
@@ -58,7 +72,6 @@
     </div>
 </section>
 
-<!-- Contacto -->
 <section id="contacto" class="my-5">
     <h3 class="text-blue-mid">Contacto</h3>
     <p>¿Tienes dudas o sugerencias? Escríbenos a <strong>contacto@servitracker.com</strong></p>

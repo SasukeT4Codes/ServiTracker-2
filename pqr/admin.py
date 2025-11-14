@@ -1,3 +1,4 @@
+# pqr/admin.py
 from django.contrib import admin
 from .models import PQR, TipoFalla, EstadoPQR
 
@@ -14,5 +15,5 @@ class EstadoPQRAdmin(admin.ModelAdmin):
 @admin.register(PQR)
 class PQRAdmin(admin.ModelAdmin):
     list_display = ("id", "ciudadano", "propiedad", "tipo_falla", "estado", "tecnico_asignado", "fecha_creacion")
-    search_fields = ("descripcion", "ciudadano__username", "propiedad__direccion")
+    search_fields = ("descripcion", "ciudadano__documento", "ciudadano__nombres", "propiedad__direccion")
     list_filter = ("estado", "tipo_falla", "propiedad__ciudad")

@@ -4,3 +4,10 @@ Superusuario - - - -
 User: admin
 Correo: admin@essa.com
 Contraseña: lemonmeloncookie
+
+
+
+python manage.py loaddata pqr/fixtures/estados_pqr.json
+python manage.py loaddata pqr/fixtures/tipos_falla.json
+
+python manage.py createsuperuser --documento 90012345

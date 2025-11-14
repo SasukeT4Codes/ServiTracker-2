@@ -5,7 +5,12 @@ from .forms import RegistroForm, LoginForm
 
 # 🌐 Vista principal del sitio (landing page)
 def index(request):
-    # El index está en templates/index.html (fuera de usuarios)
+    if request.user.is_authenticated:
+        # Pasamos el rol y el usuario al template
+        return render(request, 'index.html', {
+            'usuario': request.user,
+            'rol': request.user.rol
+        })
     return render(request, 'index.html')
 
 # 📝 Vista para registrar un nuevo usuario

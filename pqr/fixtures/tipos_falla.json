@@ -1,0 +1,6 @@
+[
+  { "model": "pqr.tipofalla", "pk": 1, "fields": { "nombre": "Corte de energía" } },
+  { "model": "pqr.tipofalla", "pk": 2, "fields": { "nombre": "Baja tensión" } },
+  { "model": "pqr.tipofalla", "pk": 3, "fields": { "nombre": "Intermitencias" } },
+  { "model": "pqr.tipofalla", "pk": 4, "fields": { "nombre": "Medidor defectuoso" } }
+]
