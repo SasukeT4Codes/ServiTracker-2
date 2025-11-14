@@ -4,9 +4,9 @@
 <h2 class="text-blue-dark">Panel de Control</h2>
 
 <!-- Contadores -->
-<div class="row">
+<div class="row mb-4">
     <div class="col-md-4">
-        <div class="card shadow-sm mb-3">
+        <div class="card shadow-sm">
             <div class="card-body text-center">
                 <h5 class="card-title">PQR Pendientes</h5>
                 <p class="display-6">{{ pendientes }}</p>
@@ -14,7 +14,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card shadow-sm mb-3">
+        <div class="card shadow-sm">
             <div class="card-body text-center">
                 <h5 class="card-title">PQR en Curso</h5>
                 <p class="display-6">{{ en_curso }}</p>
@@ -22,7 +22,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="card shadow-sm mb-3">
+        <div class="card shadow-sm">
             <div class="card-body text-center">
                 <h5 class="card-title">PQR Resueltos</h5>
                 <p class="display-6">{{ resueltos }}</p>
@@ -58,7 +58,28 @@
 
 <hr>
 
-<!-- Listado de PQR pendientes con botón de asignar -->
+<!-- Filtros -->
+<h3 class="text-blue-mid">Filtrar PQR Pendientes</h3>
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="ciudad" value="{{ ciudad }}" class="form-control" placeholder="Ciudad">
+    </div>
+    <div class="col-md-4">
+        <select name="tipo_falla" class="form-select">
+            <option value="">-- Tipo de falla --</option>
+            {% for falla in tipos_falla %}
+                <option value="{{ falla.id }}" {% if falla.id|stringformat:"s" == tipo_falla_id %}selected{% endif %}>
+                    {{ falla.nombre }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-blue-mid w-100">Aplicar filtros</button>
+    </div>
+</form>
+
+<!-- Listado de PQR pendientes -->
 <h3 class="text-blue-mid">PQR Pendientes</h3>
 <table class="table table-striped">
     <thead>

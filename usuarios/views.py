@@ -3,11 +3,12 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from .forms import RegistroForm, LoginForm
 
-#  Vista principal del sitio (landing page)
+# 🌐 Vista principal del sitio (landing page)
 def index(request):
-    return render(request, 'usuarios/index.html')
+    # El index está en templates/index.html (fuera de usuarios)
+    return render(request, 'index.html')
 
-#  Vista para registrar un nuevo usuario
+# 📝 Vista para registrar un nuevo usuario
 def registro(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -31,12 +32,12 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'usuarios/login.html', {'form': form})
 
-#  Vista para cerrar sesión
+# 🚪 Vista para cerrar sesión
 def logout_view(request):
     logout(request)
     return redirect('index')
 
-#  Vista del perfil del usuario (solo si está logueado)
+# 👤 Vista del perfil del usuario (solo si está logueado)
 @login_required
 def perfil(request):
     return render(request, 'usuarios/perfil.html', {'usuario': request.user})
