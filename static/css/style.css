@@ -29,6 +29,16 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f8f9fa;
   padding-top: 70px; /* espacio para header fijo */
+
+  /* Empujar footer al fondo */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1; /* ocupa todo el espacio disponible */
+  min-height: 60vh; /* asegura altura mínima */
 }
 
 /* Botones personalizados */
