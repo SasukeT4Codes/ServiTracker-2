@@ -1,3 +1,2 @@
 from django.contrib import admin
-
-# Register your models here.
+# No hay modelos propios en reportes por ahora
