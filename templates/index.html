@@ -9,7 +9,7 @@
 <section id="inicio" class="text-center my-5">
     <img src="{% static 'img/ESSA-logo.png' %}" alt="ESSA Logo" class="mb-3" style="max-width:150px;">
     {% if user.is_authenticated %}
-        <h2 class="text-blue-dark">Bienvenido {{ user.get_full_name|default:"Usuario" }}</h2>
+        <h2 class="text-blue-dark">Bienvenido {{ user.get_public_name }}</h2>
         <p class="lead">Accede a tu panel para gestionar tus reportes.</p>
         <div class="d-flex justify-content-center gap-3 mt-3">
             {% if user.rol == "administrador" or user.rol == "agente" %}
