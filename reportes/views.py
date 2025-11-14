@@ -1,10 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from pqr.models import PQR
 
-# 📊 Dashboard principal
+# 📊 Dashboard principal (solo administradores y agentes)
 @login_required
 def dashboard(request):
+    # Verificar rol del usuario
+    if request.user.rol not in ['administrador', 'agente']:
+        # Si no tiene permiso, lo redirigimos al inicio
+        return redirect('index')
+
     # Contadores por estado
     pendientes = PQR.objects.filter(estado__nombre="Pendiente").count()
     en_curso = PQR.objects.filter(estado__nombre="En curso").count()
