@@ -1,0 +1,51 @@
+:root {
+  --blue-light: #8ecae6;
+  --blue-mid: #219ebc;
+  --blue-deep: #126782;
+  --blue-dark: #023047;
+  --yellow: #ffb703;
+  --orange-light: #fd9e02;
+  --orange-dark: #fb8500;
+}
+
+/* Colores personalizados */
+.text-blue-light { color: var(--blue-light); }
+.text-blue-mid { color: var(--blue-mid); }
+.text-blue-deep { color: var(--blue-deep); }
+.text-blue-dark { color: var(--blue-dark); }
+.text-yellow { color: var(--yellow); }
+.text-orange-light { color: var(--orange-light); }
+.text-orange-dark { color: var(--orange-dark); }
+
+.bg-blue-light { background-color: var(--blue-light); }
+.bg-blue-mid { background-color: var(--blue-mid); }
+.bg-blue-deep { background-color: var(--blue-deep); }
+.bg-blue-dark { background-color: var(--blue-dark); }
+.bg-yellow { background-color: var(--yellow); }
+.bg-orange-light { background-color: var(--orange-light); }
+.bg-orange-dark { background-color: var(--orange-dark); }
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f8f9fa;
+  padding-top: 70px; /* espacio para header fijo */
+}
+
+/* Botones personalizados */
+.btn-blue-mid {
+  background-color: var(--blue-mid);
+  color: white;
+}
+.btn-blue-mid:hover {
+  background-color: var(--blue-deep);
+  color: white;
+}
+
+.btn-orange-dark {
+  background-color: var(--orange-dark);
+  color: white;
+}
+.btn-orange-dark:hover {
+  background-color: var(--orange-light);
+  color: white;
+}

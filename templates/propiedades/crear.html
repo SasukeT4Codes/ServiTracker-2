@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Agregar Propiedad{% endblock %}
+{% block content %}
+<h2 class="text-blue-dark">Agregar Propiedad</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-blue-mid">Guardar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil | ServiTracker{% endblock %}
+
+{% block content %}
+<h2 class="text-blue-dark">Mi Perfil</h2>
+<ul class="list-group">
+    <li class="list-group-item"><strong>Usuario:</strong> {{ usuario.username }}</li>
+    <li class="list-group-item"><strong>Email:</strong> {{ usuario.email }}</li>
+    <li class="list-group-item"><strong>Rol:</strong> {{ usuario.get_rol_display }}</li>
+</ul>
+{% endblock %}

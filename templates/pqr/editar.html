@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Editar PQR{% endblock %}
+{% block content %}
+<h2 class="text-blue-dark">Editar PQR</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-orange-dark">Actualizar</button>
+</form>
+{% endblock %}

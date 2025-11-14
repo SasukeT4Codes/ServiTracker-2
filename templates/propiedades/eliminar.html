@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar Propiedad{% endblock %}
+{% block content %}
+<h2 class="text-blue-dark">Eliminar Propiedad</h2>
+<p>¿Seguro que deseas eliminar la propiedad <strong>{{ propiedad.direccion }}</strong>?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+    <a href="{% url 'lista_propiedades' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
