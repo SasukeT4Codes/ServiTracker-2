@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark">Gestión de Usuarios</h2>
+    <a href="{% url 'crear_usuario' %}" class="btn btn-blue-mid mb-3">➕ Crear nuevo usuario</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Activo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr>
+                <td>{{ u.documento }}</td>
+                <td>{{ u.nombres }}</td>
+                <td>{{ u.apellidos }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.rol }}</td>
+                <td>{{ u.is_active|yesno:"Sí,No" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay usuarios registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

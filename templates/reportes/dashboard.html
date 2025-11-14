@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard | ServiTracker{% endblock %}
+
 {% block content %}
 <h2 class="text-blue-dark">Panel de Control</h2>
 
@@ -109,4 +110,13 @@
         {% endfor %}
     </tbody>
 </table>
+
+<hr>
+
+<!-- Acciones administrativas -->
+<h3 class="text-blue-mid">Acciones administrativas</h3>
+<div class="d-flex gap-3 mb-4">
+    <a href="{% url 'lista_usuarios' %}" class="btn btn-blue-mid">👥 Gestionar Usuarios</a>
+    <a href="{% url 'registro' %}" class="btn btn-orange-dark">➕ Registrar nuevo usuario</a>
+</div>
 {% endblock %}
