@@ -3,13 +3,13 @@
 {% block title %}Editar Usuario | ServiTracker{% endblock %}
 
 {% block content %}
-<div class="container my-2">
+<div class="container my-1">
     <div class="card shadow-sm">
         <div class="card-header bg-blue-mid text-white">
             <h4 class="mb-0">Editar usuario</h4>
         </div>
         <div class="card-body">
-            <form method="post" class="row g-3">
+            <form method="post" class="row g-3" id="editar-form">
                 {% csrf_token %}
 
                 <!-- Documento -->
@@ -94,17 +94,20 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="submit" class="btn btn-blue-mid">Sí, guardar</button>
+        <button type="button" class="btn btn-blue-mid" id="confirm-submit">Sí, guardar</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Campo dinámico ROL -->
+<!-- Scripts dinámicos -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const rolSelect = document.querySelector("#id_rol");
     const especialidadField = document.getElementById("especialidad-field");
+    const confirmBtn = document.getElementById("confirm-submit");
+    const form = document.getElementById("editar-form");
+    const passwordInput = document.getElementById("id_nueva_contrasena");
 
     function toggleFields() {
         const rol = rolSelect.value;
@@ -115,6 +118,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
     toggleFields();
     rolSelect.addEventListener("change", toggleFields);
+
+    confirmBtn.addEventListener("click", function() {
+        if (passwordInput && passwordInput.value && passwordInput.value.length < 8) {
+            alert("La nueva contraseña debe tener al menos 8 caracteres.");
+            return;
+        }
+        form.submit();
+    });
 });
 </script>
 {% endblock %}
