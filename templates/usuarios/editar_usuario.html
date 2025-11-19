@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Editar Usuario | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-2">
+    <div class="card shadow-sm">
+        <div class="card-header bg-blue-mid text-white">
+            <h4 class="mb-0">Editar usuario</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+
+                <!-- Documento -->
+                <div class="col-md-6">
+                    {{ form.documento.label_tag }}
+                    {{ form.documento|add_class:"form-control" }}
+                </div>
+
+                <!-- Nombre -->
+                <div class="col-md-6">
+                    {{ form.nombres.label_tag }}
+                    {{ form.nombres|add_class:"form-control" }}
+                </div>
+
+                <!-- Apellido -->
+                <div class="col-md-6">
+                    {{ form.apellidos.label_tag }}
+                    {{ form.apellidos|add_class:"form-control" }}
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6">
+                    {{ form.email.label_tag }}
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+
+                <!-- Rol -->
+                <div class="col-md-6">
+                    {{ form.rol.label_tag }}
+                    {{ form.rol|add_class:"form-select" }}
+                </div>
+
+                <!-- Especialidad (siempre renderizado, oculto dinámicamente) -->
+                <div class="col-md-6" id="especialidad-field">
+                    {{ form.especialidad.label_tag }}
+                    {{ form.especialidad|add_class:"form-control" }}
+                </div>
+
+                <!-- Nueva contraseña -->
+                <div class="col-md-6">
+                    {{ form.nueva_contrasena.label_tag }}
+                    {{ form.nueva_contrasena|add_class:"form-control" }}
+                    <small class="form-text text-muted">
+                        Si deseas cambiar la contraseña de este usuario, ingrésala aquí (mínimo 8 caracteres).
+                    </small>
+                </div>
+
+                <!-- Estado activo (al final del formulario) -->
+                <div class="col-md-6" id="is-active-field">
+                    <div class="form-check form-switch mt-2">
+                        {{ form.is_active }}
+                        <label class="form-check-label" for="id_is_active">¿Usuario activo en el sistema?</label>
+                    </div>
+                </div>
+
+                <!-- Botones en una sola fila -->
+                <div class="row mt-4 g-2">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-blue-mid w-100 py-3" data-bs-toggle="modal" data-bs-target="#confirmModal">
+                            💾 Guardar cambios
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary w-100 py-3">⬅ Volver a la lista</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-blue-mid text-white">
+        <h5 class="modal-title" id="confirmModalLabel">Confirmar cambios</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas guardar los cambios de este usuario?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-blue-mid">Sí, guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Campo dinámico ROL -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const rolSelect = document.querySelector("#id_rol");
+    const especialidadField = document.getElementById("especialidad-field");
+
+    function toggleFields() {
+        const rol = rolSelect.value;
+        if (especialidadField) {
+            especialidadField.style.display = (rol === "tecnico") ? "block" : "none";
+        }
+    }
+
+    toggleFields();
+    rolSelect.addEventListener("change", toggleFields);
+});
+</script>
+{% endblock %}

@@ -98,7 +98,7 @@ class UsuarioChangeForm(forms.ModelForm):
         label="Nueva contraseña",
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
         required=False,
-        help_text="Si deseas cambiar la contraseña de este usuario, ingrésala aquí."
+        help_text="Si deseas cambiar la contraseña de este usuario, ingrésala aquí (mínimo 8 caracteres)."
     )
 
     class Meta:
@@ -115,6 +115,12 @@ class UsuarioChangeForm(forms.ModelForm):
             "is_staff",
             "is_superuser",
         )
+
+    def clean_nueva_contrasena(self):
+        nueva = self.cleaned_data.get("nueva_contrasena")
+        if nueva and len(nueva) < 8:
+            raise forms.ValidationError("La contraseña debe tener al menos 8 caracteres.")
+        return nueva
 
     def clean_password(self):
         # Mantener el hash original si no se cambia

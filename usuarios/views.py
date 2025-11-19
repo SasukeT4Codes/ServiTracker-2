@@ -89,19 +89,19 @@ def crear_usuario(request):
         form = RegistroForm()
     return render(request, "usuarios/crear_usuario.html", {"form": form})
 
-# 🔍 Vista para ver y editar detalle de usuario (solo admin/staff)
+# ✏️ Vista para editar usuario (solo admin/staff)
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
-def detalle_usuario(request, pk):
+def editar_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
 
     if request.method == "POST":
         form = UsuarioChangeForm(request.POST, instance=usuario)
         if form.is_valid():
-            nueva_contrasena = request.POST.get("nueva_contrasena")
+            nueva_contrasena = form.cleaned_data.get("nueva_contrasena")
             if nueva_contrasena:
                 usuario.set_password(nueva_contrasena)
             form.save()
-            return redirect("detalle_usuario", pk=usuario.pk)
+            return redirect("editar_usuario", pk=usuario.pk)
     else:
         form = UsuarioChangeForm(instance=usuario)
 
@@ -115,7 +115,7 @@ def detalle_usuario(request, pk):
     elif usuario.rol == "tecnico":
         pqr_asignados = PQR.objects.filter(tecnico=usuario)
 
-    return render(request, "usuarios/detalle_usuario.html", {
+    return render(request, "usuarios/editar_usuario.html", {
         "usuario": usuario,
         "form": form,
         "propiedades": propiedades,
@@ -135,21 +135,3 @@ def cambiar_contrasena(request):
     else:
         form = CustomPasswordChangeForm(user=request.user)
     return render(request, "usuarios/cambiar_contrasena.html", {"form": form})
-
-# 🔑 Vista para resetear contraseña de otro usuario (solo admin/staff)
-@user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
-def resetear_contrasena_usuario(request, pk):
-    usuario = get_object_or_404(Usuario, pk=pk)
-
-    if request.method == "POST":
-        nueva = request.POST.get("nueva_contrasena")
-        confirmar = request.POST.get("confirmar_contrasena")
-        if nueva and nueva == confirmar:
-            usuario.set_password(nueva)
-            usuario.save()
-            return redirect("detalle_usuario", pk=usuario.pk)
-        else:
-            error = "Las contraseñas no coinciden."
-            return render(request, "usuarios/resetear_contrasena.html", {"usuario": usuario, "error": error})
-
-    return render(request, "usuarios/resetear_contrasena.html", {"usuario": usuario})
