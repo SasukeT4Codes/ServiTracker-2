@@ -16,20 +16,24 @@ Usuario = get_user_model()
 # 🌐 Vista principal del sitio (landing page)
 def index(request):
     if request.user.is_authenticated:
-        return render(request, 'index.html', {
-            'usuario': request.user,
-            'rol': request.user.rol
-        })
+        # Redirigir según rol
+        if request.user.rol == "ciudadano":
+            return redirect("dashboard_ciudadano")
+        elif request.user.is_staff or request.user.rol == "administrador":
+            return redirect("dashboard_admin")
+        # Otros roles pueden ir al index genérico
+        return render(request, 'index.html', {"usuario": request.user})
     return render(request, 'index.html')
 
-# 📝 Vista para registrar un nuevo usuario (público)
+# 📝 Vista para registro público (usuario anónimo crea su propia cuenta)
 def registro(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
             usuario = form.save()
-            login(request, usuario)
-            return redirect('index')
+            # ✅ El usuario recién creado inicia sesión automáticamente
+            login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('dashboard_ciudadano')
     else:
         form = RegistroForm()
     return render(request, 'usuarios/registro.html', {'form': form})
@@ -41,7 +45,12 @@ def login_view(request):
         if form.is_valid():
             usuario = form.get_user()
             login(request, usuario)
-            return redirect('index')
+            # Redirigir según rol
+            if usuario.rol == "ciudadano":
+                return redirect("dashboard_ciudadano")
+            elif usuario.is_staff or usuario.rol == "administrador":
+                return redirect("dashboard_admin")
+            return redirect("index")
     else:
         form = LoginForm()
     return render(request, 'usuarios/login.html', {'form': form})
@@ -71,6 +80,33 @@ def dashboard_ciudadano(request):
         "pqr": pqr,
     })
 
+# 📊 Dashboard del admin/agente
+@user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
+def dashboard_admin(request):
+    pendientes = PQR.objects.filter(estado="pendiente").count()
+    en_curso = PQR.objects.filter(estado="en_curso").count()
+    resueltos = PQR.objects.filter(estado="resuelto").count()
+
+    # Estadísticas por ciudad
+    estadisticas_ciudad = {}
+    for p in PQR.objects.values("ciudad").distinct():
+        ciudad = p["ciudad"]
+        estadisticas_ciudad[ciudad] = {
+            "pendientes": PQR.objects.filter(ciudad=ciudad, estado="pendiente").count(),
+            "resueltos": PQR.objects.filter(ciudad=ciudad, estado="resuelto").count(),
+        }
+
+    # Listado de PQR pendientes
+    pqr_pendientes = PQR.objects.filter(estado="pendiente")
+
+    return render(request, "usuarios/dashboard_admin.html", {
+        "pendientes": pendientes,
+        "en_curso": en_curso,
+        "resueltos": resueltos,
+        "estadisticas_ciudad": estadisticas_ciudad,
+        "pqr_pendientes": pqr_pendientes,
+    })
+
 # 📋 Vista para listar usuarios (solo admin/staff)
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
 def lista_usuarios(request):
@@ -84,6 +120,7 @@ def crear_usuario(request):
         form = RegistroForm(request.POST)
         if form.is_valid():
             form.save()
+            # ✅ No se hace login, solo se redirige al listado
             return redirect("lista_usuarios")
     else:
         form = RegistroForm()
