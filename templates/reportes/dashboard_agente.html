@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Agente | ServiTracker{% endblock %}
+
+{% block content %}
+<h2 class="text-blue-dark">Panel del Agente</h2>
+
+<!-- Contadores -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">PQR Pendientes</h5>
+                <p class="display-6">{{ pendientes }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">PQR en Curso</h5>
+                <p class="display-6">{{ en_curso }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">PQR Resueltos</h5>
+                <p class="display-6">{{ resueltos }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- Estadísticas por ciudad -->
+<h3 class="text-blue-mid">Estadísticas por ciudad</h3>
+<table class="table table-striped mb-5">
+    <thead>
+        <tr>
+            <th>Ciudad</th>
+            <th>Pendientes</th>
+            <th>Resueltos</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ciudad, datos in estadisticas_ciudad.items %}
+        <tr>
+            <td>{{ ciudad }}</td>
+            <td>{{ datos.pendientes }}</td>
+            <td>{{ datos.resueltos }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="3">No hay datos disponibles.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<!-- Listado de PQR pendientes -->
+<h3 class="text-blue-mid">PQR Pendientes</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Propiedad</th>
+            <th>Ciudadano</th>
+            <th>Tipo de falla</th>
+            <th>Descripción</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in pqr_pendientes %}
+        <tr>
+            <td>{{ pqr.id }}</td>
+            <td>{{ pqr.propiedad }}</td>
+            <td>{{ pqr.ciudadano }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.descripcion }}</td>
+            <td>
+                <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-sm btn-blue-mid">Asignar técnico</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6">No hay PQR pendientes.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

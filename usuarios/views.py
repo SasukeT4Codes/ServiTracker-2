@@ -16,12 +16,14 @@ Usuario = get_user_model()
 # 🌐 Vista principal del sitio (landing page)
 def index(request):
     if request.user.is_authenticated:
-        # Redirigir según rol
         if request.user.rol == "ciudadano":
             return redirect("dashboard_ciudadano")
+        elif request.user.rol == "agente":
+            return redirect("dashboard_agente")
+        elif request.user.rol == "tecnico":
+            return redirect("dashboard_tecnico")
         elif request.user.is_staff or request.user.rol == "administrador":
             return redirect("dashboard_admin")
-        # Otros roles pueden ir al index genérico
         return render(request, 'index.html', {"usuario": request.user})
     return render(request, 'index.html')
 
@@ -31,7 +33,6 @@ def registro(request):
         form = RegistroForm(request.POST)
         if form.is_valid():
             usuario = form.save()
-            # ✅ El usuario recién creado inicia sesión automáticamente
             login(request, usuario, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('dashboard_ciudadano')
     else:
@@ -45,9 +46,12 @@ def login_view(request):
         if form.is_valid():
             usuario = form.get_user()
             login(request, usuario)
-            # Redirigir según rol
             if usuario.rol == "ciudadano":
                 return redirect("dashboard_ciudadano")
+            elif usuario.rol == "agente":
+                return redirect("dashboard_agente")
+            elif usuario.rol == "tecnico":
+                return redirect("dashboard_tecnico")
             elif usuario.is_staff or usuario.rol == "administrador":
                 return redirect("dashboard_admin")
             return redirect("index")
@@ -60,7 +64,7 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
-# 👤 Vista del perfil del usuario (solo lectura + cambiar contraseña)
+# 👤 Vista del perfil del usuario
 @login_required
 def perfil(request):
     return render(request, 'usuarios/perfil.html', {'usuario': request.user})
@@ -70,67 +74,36 @@ def perfil(request):
 def dashboard_ciudadano(request):
     if request.user.rol != "ciudadano":
         return redirect("index")
-
     propiedades = Propiedad.objects.filter(usuario=request.user)
     pqr = PQR.objects.filter(ciudadano=request.user)
-
     return render(request, "usuarios/dashboard_ciudadano.html", {
         "usuario": request.user,
         "propiedades": propiedades,
         "pqr": pqr,
     })
 
-# 📊 Dashboard del admin/agente
-@user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
-def dashboard_admin(request):
-    pendientes = PQR.objects.filter(estado="pendiente").count()
-    en_curso = PQR.objects.filter(estado="en_curso").count()
-    resueltos = PQR.objects.filter(estado="resuelto").count()
-
-    # Estadísticas por ciudad
-    estadisticas_ciudad = {}
-    for p in PQR.objects.values("ciudad").distinct():
-        ciudad = p["ciudad"]
-        estadisticas_ciudad[ciudad] = {
-            "pendientes": PQR.objects.filter(ciudad=ciudad, estado="pendiente").count(),
-            "resueltos": PQR.objects.filter(ciudad=ciudad, estado="resuelto").count(),
-        }
-
-    # Listado de PQR pendientes
-    pqr_pendientes = PQR.objects.filter(estado="pendiente")
-
-    return render(request, "usuarios/dashboard_admin.html", {
-        "pendientes": pendientes,
-        "en_curso": en_curso,
-        "resueltos": resueltos,
-        "estadisticas_ciudad": estadisticas_ciudad,
-        "pqr_pendientes": pqr_pendientes,
-    })
-
-# 📋 Vista para listar usuarios (solo admin/staff)
+# 📋 Vista para listar usuarios
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
 def lista_usuarios(request):
     usuarios = Usuario.objects.all()
     return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
 
-# ➕ Vista para crear usuarios (solo admin/staff)
+# ➕ Vista para crear usuarios
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
 def crear_usuario(request):
     if request.method == "POST":
         form = RegistroForm(request.POST)
         if form.is_valid():
             form.save()
-            # ✅ No se hace login, solo se redirige al listado
             return redirect("lista_usuarios")
     else:
         form = RegistroForm()
     return render(request, "usuarios/crear_usuario.html", {"form": form})
 
-# ✏️ Vista para editar usuario (solo admin/staff)
+# ✏️ Vista para editar usuario
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
 def editar_usuario(request, pk):
     usuario = get_object_or_404(Usuario, pk=pk)
-
     if request.method == "POST":
         form = UsuarioChangeForm(request.POST, instance=usuario)
         if form.is_valid():
@@ -138,11 +111,9 @@ def editar_usuario(request, pk):
             nueva_contrasena = form.cleaned_data.get("nueva_contrasena")
             if nueva_contrasena:
                 usuario.set_password(nueva_contrasena)
-
             # 🔐 Limpieza de especialidad si el rol ya no es técnico
             if usuario.rol != "tecnico":
                 usuario.especialidad = None
-
             usuario.save()
             return redirect("editar_usuario", pk=usuario.pk)
     else:
@@ -166,7 +137,7 @@ def editar_usuario(request, pk):
         "pqr_asignados": pqr_asignados,
     })
 
-# 🔑 Vista para cambiar contraseña (usuario autenticado)
+# 🔑 Vista para cambiar contraseña
 @login_required
 def cambiar_contrasena(request):
     if request.method == "POST":

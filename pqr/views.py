@@ -75,7 +75,11 @@ def asignar_tecnico(request, pk):
             estado_en_curso = EstadoPQR.objects.get(nombre="En curso")
             pqr.estado = estado_en_curso
             pqr.save()
-            return redirect('dashboard')
+            # Redirigir según rol
+            if request.user.rol == "agente":
+                return redirect('dashboard_agente')
+            else:
+                return redirect('dashboard_admin')
     else:
         form = AsignarTecnicoForm(instance=pqr)
     return render(request, 'pqr/asignar_tecnico.html', {'form': form, 'pqr': pqr})

@@ -12,12 +12,14 @@
         <p class="lead">Bienvenido a ServiTracker. Accede a tu panel para gestionar tus reportes y datos.</p>
 
         <div class="d-flex justify-content-center gap-3 mt-3">
-            {% if user.rol == "administrador" or user.rol == "agente" %}
-                <a href="{% url 'dashboard' %}" class="btn btn-blue-mid">🔧 Ir al Dashboard</a>
+            {% if user.rol == "administrador" %}
+                <a href="{% url 'dashboard_admin' %}" class="btn btn-blue-mid">🔧 Ir al Dashboard</a>
+            {% elif user.rol == "agente" %}
+                <a href="{% url 'dashboard_agente' %}" class="btn btn-blue-mid">📊 Panel de Agente</a>
             {% elif user.rol == "ciudadano" %}
                 <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-blue-mid">🏠 Mi Panel</a>
             {% elif user.rol == "tecnico" %}
-                <a href="{% url 'mis_asignaciones' %}" class="btn btn-blue-mid">🔍 Mis asignaciones</a>
+                <a href="{% url 'dashboard_tecnico' %}" class="btn btn-blue-mid">🔍 Mis asignaciones</a>
             {% else %}
                 <a href="{% url 'perfil' %}" class="btn btn-blue-mid">👤 Mi perfil</a>
             {% endif %}

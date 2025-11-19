@@ -14,7 +14,7 @@ urlpatterns = [
     path("perfil/", views.perfil, name="perfil"),
     path("perfil/cambiar-contrasena/", views.cambiar_contrasena, name="cambiar_contrasena"),
 
-    # Gestión interna de usuarios (solo admin/staff)
+    # Gestión interna de usuarios (solo admin)
     path("usuarios/lista/", views.lista_usuarios, name="lista_usuarios"),
     path("usuarios/nuevo/", views.crear_usuario, name="crear_usuario"),
     path("usuarios/editar/<int:pk>/", views.editar_usuario, name="editar_usuario"),
