@@ -97,10 +97,16 @@ def editar_usuario(request, pk):
     if request.method == "POST":
         form = UsuarioChangeForm(request.POST, instance=usuario)
         if form.is_valid():
+            usuario = form.save(commit=False)
             nueva_contrasena = form.cleaned_data.get("nueva_contrasena")
             if nueva_contrasena:
                 usuario.set_password(nueva_contrasena)
-            form.save()
+
+            # 🔐 Limpieza de especialidad si el rol ya no es técnico
+            if usuario.rol != "tecnico":
+                usuario.especialidad = None
+
+            usuario.save()
             return redirect("editar_usuario", pk=usuario.pk)
     else:
         form = UsuarioChangeForm(instance=usuario)
