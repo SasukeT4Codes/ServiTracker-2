@@ -6,6 +6,9 @@
   --yellow: #ffb703;
   --orange-light: #fd9e02;
   --orange-dark: #fb8500;
+
+  --green-light: #198754;
+  --green-dark: #146c43;
 }
 
 /* Colores personalizados */
@@ -57,5 +60,15 @@ main {
 }
 .btn-orange-dark:hover {
   background-color: var(--orange-light);
+  color: white;
+}
+
+
+.btn-green-dark {
+  background-color: var(--green-light);
+  color: white;
+}
+.btn-green-dark:hover {
+  background-color: var(--green-dark);
   color: white;
 }

@@ -32,13 +32,27 @@
     </div>
 </div>
 
+
 <!-- Acciones administrativas -->
 <h3 class="text-blue-mid">Acciones administrativas</h3>
-<div class="d-flex gap-3 mb-4">
-    <a href="{% url 'lista_usuarios' %}" class="btn btn-blue-mid">👥 Gestionar Usuarios</a>
-    <a href="{% url 'registro' %}" class="btn btn-orange-dark">➕ Registrar nuevo usuario</a>
-    <a href="{% url 'lista_propiedades' %}" class="btn btn-green-dark">🏠 Gestionar Propiedades</a>
+<div class="row mb-4">
+    <div class="col-md-4">
+        <a href="{% url 'lista_usuarios' %}" class="btn btn-blue-mid w-100 py-3 text-center">
+            👥 Gestionar Usuarios
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'registro' %}" class="btn btn-orange-dark w-100 py-3 text-center">
+            ➕ Registrar nuevo usuario
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{% url 'lista_propiedades' %}" class="btn btn-green-dark w-100 py-3 text-center">
+            🏠 Gestionar Propiedades
+        </a>
+    </div>
 </div>
+
 
 <hr>
 
