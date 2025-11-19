@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Eliminar Propiedad{% endblock %}
+{% block title %}Eliminar Propiedad | ServiTracker{% endblock %}
+
 {% block content %}
-<h2 class="text-blue-dark">Eliminar Propiedad</h2>
-<p>¿Seguro que deseas eliminar la propiedad <strong>{{ propiedad.direccion }}</strong>?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn btn-danger">Eliminar</button>
-    <a href="{% url 'lista_propiedades' %}" class="btn btn-secondary">Cancelar</a>
-</form>
+<div class="container my-5">
+    <h2 class="text-danger">¿Eliminar propiedad?</h2>
+    <p><strong>{{ propiedad.direccion }}</strong> — {{ propiedad.ciudad }}, {{ propiedad.departamento }}</p>
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'lista_propiedades' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

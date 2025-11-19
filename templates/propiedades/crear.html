@@ -1,10 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Agregar Propiedad{% endblock %}
+{% block title %}Añadir Propiedad | ServiTracker{% endblock %}
+
 {% block content %}
-<h2 class="text-blue-dark">Agregar Propiedad</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-blue-mid">Guardar</button>
-</form>
+<div class="container my-5">
+    <h2 class="text-blue-dark">Añadir nueva propiedad</h2>
+    <form method="post" class="mt-3">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-blue-mid">Guardar</button>
+        <a href="{% url 'lista_propiedades' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

@@ -4,29 +4,31 @@
 {% block title %}Inicio | ServiTracker{% endblock %}
 
 {% block content %}
-
 <section id="inicio" class="text-center my-5">
     <img src="{% static 'img/ESSA-logo.png' %}" alt="ESSA Logo" class="mb-3" style="max-width:150px;">
+
     {% if user.is_authenticated %}
-        <h2 class="text-blue-dark">Bienvenido {{ user.get_public_name }}</h2>
-        <p class="lead">Accede a tu panel para gestionar tus reportes.</p>
+        <h2 class="text-blue-dark">Hola {{ user.get_public_name }}</h2>
+        <p class="lead">Bienvenido a ServiTracker. Accede a tu panel para gestionar tus reportes y datos.</p>
+
         <div class="d-flex justify-content-center gap-3 mt-3">
             {% if user.rol == "administrador" or user.rol == "agente" %}
-                <a href="{% url 'dashboard' %}" class="btn btn-blue-mid">Ir al Dashboard</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-blue-mid">🔧 Ir al Dashboard</a>
             {% elif user.rol == "ciudadano" %}
-                <a href="{% url 'lista_pqr' %}" class="btn btn-blue-mid">Mis PQR</a>
+                <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-blue-mid">🏠 Mi Panel</a>
             {% elif user.rol == "tecnico" %}
-                <a href="{% url 'mis_asignaciones' %}" class="btn btn-blue-mid">Mis asignaciones</a>
+                <a href="{% url 'mis_asignaciones' %}" class="btn btn-blue-mid">🔍 Mis asignaciones</a>
             {% else %}
-                <a href="{% url 'perfil' %}" class="btn btn-blue-mid">Mi perfil</a>
+                <a href="{% url 'perfil' %}" class="btn btn-blue-mid">👤 Mi perfil</a>
             {% endif %}
+            <a href="{% url 'logout' %}" class="btn btn-secondary">Cerrar sesión</a>
         </div>
     {% else %}
         <h2 class="text-blue-dark">Bienvenido a ServiTracker</h2>
         <p class="lead">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
         <div class="d-flex justify-content-center gap-3 mt-3">
-            <a href="{% url 'login' %}" class="btn btn-blue-mid">Iniciar sesión</a>
-            <a href="/pqr/rapida" class="btn btn-orange-dark">PQR rápida</a>
+            <a href="{% url 'login' %}" class="btn btn-blue-mid">🔐 Iniciar sesión</a>
+            <a href="/pqr/rapida" class="btn btn-orange-dark">⚡ PQR rápida</a>
         </div>
     {% endif %}
 </section>
@@ -105,5 +107,4 @@
         <a href="https://www.youtube.com/user/ESSAColombia" target="_blank">YouTube</a>.
     </p>
 </section>
-
 {% endblock %}

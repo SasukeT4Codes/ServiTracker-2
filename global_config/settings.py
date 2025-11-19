@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'propiedades',
     'pqr',
     'reportes',
+    "widget_tweaks",
 ]
 
 

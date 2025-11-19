@@ -1,8 +1,15 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, logout
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .forms import RegistroForm, LoginForm
+from .forms import (
+    RegistroForm,
+    LoginForm,
+    UsuarioChangeForm,
+    CustomPasswordChangeForm
+)
 from django.contrib.auth import get_user_model
+from propiedades.models import Propiedad
+from pqr.models import PQR
 
 Usuario = get_user_model()
 
@@ -44,10 +51,25 @@ def logout_view(request):
     logout(request)
     return redirect('index')
 
-# 👤 Vista del perfil del usuario
+# 👤 Vista del perfil del usuario (solo lectura + cambiar contraseña)
 @login_required
 def perfil(request):
     return render(request, 'usuarios/perfil.html', {'usuario': request.user})
+
+# 📊 Dashboard del ciudadano
+@login_required
+def dashboard_ciudadano(request):
+    if request.user.rol != "ciudadano":
+        return redirect("index")
+
+    propiedades = Propiedad.objects.filter(usuario=request.user)
+    pqr = PQR.objects.filter(ciudadano=request.user)
+
+    return render(request, "usuarios/dashboard_ciudadano.html", {
+        "usuario": request.user,
+        "propiedades": propiedades,
+        "pqr": pqr,
+    })
 
 # 📋 Vista para listar usuarios (solo admin/staff)
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
@@ -66,3 +88,68 @@ def crear_usuario(request):
     else:
         form = RegistroForm()
     return render(request, "usuarios/crear_usuario.html", {"form": form})
+
+# 🔍 Vista para ver y editar detalle de usuario (solo admin/staff)
+@user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
+def detalle_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+
+    if request.method == "POST":
+        form = UsuarioChangeForm(request.POST, instance=usuario)
+        if form.is_valid():
+            nueva_contrasena = request.POST.get("nueva_contrasena")
+            if nueva_contrasena:
+                usuario.set_password(nueva_contrasena)
+            form.save()
+            return redirect("detalle_usuario", pk=usuario.pk)
+    else:
+        form = UsuarioChangeForm(instance=usuario)
+
+    propiedades = []
+    pqr_creados = []
+    pqr_asignados = []
+
+    if usuario.rol == "ciudadano":
+        propiedades = Propiedad.objects.filter(usuario=usuario)
+        pqr_creados = PQR.objects.filter(ciudadano=usuario)
+    elif usuario.rol == "tecnico":
+        pqr_asignados = PQR.objects.filter(tecnico=usuario)
+
+    return render(request, "usuarios/detalle_usuario.html", {
+        "usuario": usuario,
+        "form": form,
+        "propiedades": propiedades,
+        "pqr_creados": pqr_creados,
+        "pqr_asignados": pqr_asignados,
+    })
+
+# 🔑 Vista para cambiar contraseña (usuario autenticado)
+@login_required
+def cambiar_contrasena(request):
+    if request.method == "POST":
+        form = CustomPasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            usuario = form.save()
+            update_session_auth_hash(request, usuario)
+            return redirect("perfil")
+    else:
+        form = CustomPasswordChangeForm(user=request.user)
+    return render(request, "usuarios/cambiar_contrasena.html", {"form": form})
+
+# 🔑 Vista para resetear contraseña de otro usuario (solo admin/staff)
+@user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
+def resetear_contrasena_usuario(request, pk):
+    usuario = get_object_or_404(Usuario, pk=pk)
+
+    if request.method == "POST":
+        nueva = request.POST.get("nueva_contrasena")
+        confirmar = request.POST.get("confirmar_contrasena")
+        if nueva and nueva == confirmar:
+            usuario.set_password(nueva)
+            usuario.save()
+            return redirect("detalle_usuario", pk=usuario.pk)
+        else:
+            error = "Las contraseñas no coinciden."
+            return render(request, "usuarios/resetear_contrasena.html", {"usuario": usuario, "error": error})
+
+    return render(request, "usuarios/resetear_contrasena.html", {"usuario": usuario})

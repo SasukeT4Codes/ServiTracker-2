@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Propiedad
 from .forms import PropiedadForm
 
-# 📋 Listar propiedades del usuario
+# 📋 Listar propiedades del usuario autenticado
 @login_required
 def lista_propiedades(request):
     propiedades = Propiedad.objects.filter(usuario=request.user)
@@ -34,7 +34,7 @@ def editar_propiedad(request, pk):
             return redirect('lista_propiedades')
     else:
         form = PropiedadForm(instance=propiedad)
-    return render(request, 'propiedades/editar.html', {'form': form})
+    return render(request, 'propiedades/editar.html', {'form': form, 'propiedad': propiedad})
 
 # ❌ Eliminar propiedad
 @login_required

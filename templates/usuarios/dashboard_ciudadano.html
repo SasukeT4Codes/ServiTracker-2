@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Ciudadano | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark mb-4">Hola, {{ usuario.nombres }} 👋</h2>
+    <p class="lead">Bienvenido a tu panel ciudadano. Aquí puedes gestionar tus propiedades, reportes y perfil.</p>
+
+    <div class="row g-4 mt-4">
+
+        <!-- Mis Propiedades -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">🏠 Mis Propiedades</h5>
+                    <p class="card-text">Consulta y administra tus propiedades registradas.</p>
+                    <a href="{% url 'perfil' %}#propiedades" class="btn btn-blue-mid w-100">Ver propiedades</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mis PQR -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">📄 Mis PQR</h5>
+                    <p class="card-text">Revisa el estado de tus reportes y crea nuevos.</p>
+                    <a href="{% url 'mis_pqr' %}" class="btn btn-blue-mid w-100">Gestionar PQR</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mi Perfil -->
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title">👤 Mi Perfil</h5>
+                    <p class="card-text">Consulta tus datos personales y cambia tu contraseña.</p>
+                    <a href="{% url 'perfil' %}" class="btn btn-blue-mid w-100">Ver perfil</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Sección resumen -->
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-blue-mid text-white">
+                    <h5 class="mb-0">Resumen de propiedades</h5>
+                </div>
+                <div class="card-body">
+                    {% if propiedades %}
+                        <ul class="list-group">
+                            {% for propiedad in propiedades %}
+                                <li class="list-group-item">
+                                    {{ propiedad.direccion }} — {{ propiedad.ciudad }}, {{ propiedad.departamento }}
+                                    {% if not propiedad.activa %}
+                                        <span class="badge bg-secondary">Inactiva</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No tienes propiedades registradas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mt-md-0 mt-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-blue-mid text-white">
+                    <h5 class="mb-0">Resumen de PQR</h5>
+                </div>
+                <div class="card-body">
+                    {% if pqr %}
+                        <ul class="list-group">
+                            {% for reporte in pqr %}
+                                <li class="list-group-item">
+                                    <strong>ID:</strong> {{ reporte.id }} — {{ reporte.descripcion }}
+                                    <span class="badge bg-info">{{ reporte.estado }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No has creado PQR aún.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

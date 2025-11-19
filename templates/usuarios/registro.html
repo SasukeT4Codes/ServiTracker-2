@@ -9,9 +9,70 @@
         <h2 class="text-center text-blue-dark">Registro de usuario</h2>
         <form method="post" class="mt-3">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-orange-dark w-100">Registrarse</button>
+
+            <!-- Campos básicos -->
+            <div class="mb-3">
+                {{ form.documento.label_tag }}
+                {{ form.documento }}
+            </div>
+            <div class="mb-3">
+                {{ form.nombres.label_tag }}
+                {{ form.nombres }}
+            </div>
+            <div class="mb-3">
+                {{ form.apellidos.label_tag }}
+                {{ form.apellidos }}
+            </div>
+            <div class="mb-3">
+                {{ form.email.label_tag }}
+                {{ form.email }}
+            </div>
+            <div class="mb-3">
+                {{ form.rol.label_tag }}
+                {{ form.rol }}
+            </div>
+
+            <!-- Contraseña -->
+            <div class="mb-3">
+                {{ form.password1.label_tag }}
+                {{ form.password1 }}
+            </div>
+            <div class="mb-3">
+                {{ form.password2.label_tag }}
+                {{ form.password2 }}
+            </div>
+
+            <!-- Campos dinámicos -->
+            <div id="ciudadano-fields" style="display:none;">
+                <h5 class="text-blue-mid mt-4">Dirección principal</h5>
+                {{ form.direccion }}
+            </div>
+
+            <div id="tecnico-fields" style="display:none;">
+                <h5 class="text-blue-mid mt-4">Especialidad</h5>
+                {{ form.especialidad }}
+                <p class="mt-2">¿No está en la lista? Escríbela aquí:</p>
+                {{ form.nueva_especialidad }}
+            </div>
+
+            <button type="submit" class="btn btn-orange-dark w-100 mt-4">Registrarse</button>
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const rolSelect = document.querySelector("#id_rol");
+    const ciudadanoFields = document.getElementById("ciudadano-fields");
+    const tecnicoFields = document.getElementById("tecnico-fields");
+
+    function toggleFields() {
+        ciudadanoFields.style.display = rolSelect.value === "ciudadano" ? "block" : "none";
+        tecnicoFields.style.display = rolSelect.value === "tecnico" ? "block" : "none";
+    }
+
+    rolSelect.addEventListener("change", toggleFields);
+    toggleFields(); // inicializa al cargar
+});
+</script>
 {% endblock %}

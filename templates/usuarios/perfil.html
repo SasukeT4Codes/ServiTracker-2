@@ -1,13 +1,78 @@
 {% extends 'base.html' %}
 {% load static %}
-
 {% block title %}Mi Perfil | ServiTracker{% endblock %}
 
 {% block content %}
-<h2 class="text-blue-dark">Mi Perfil</h2>
-<ul class="list-group">
-    <li class="list-group-item"><strong>Usuario:</strong> {{ usuario.username }}</li>
-    <li class="list-group-item"><strong>Email:</strong> {{ usuario.email }}</li>
-    <li class="list-group-item"><strong>Rol:</strong> {{ usuario.get_rol_display }}</li>
-</ul>
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-blue-mid text-white">
+            <h4 class="mb-0">Mi Perfil</h4>
+        </div>
+        <div class="card-body">
+            <ul class="list-group mb-3">
+                <li class="list-group-item">
+                    <strong>Documento:</strong> {{ usuario.documento }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Nombre completo:</strong> {{ usuario.nombres }} {{ usuario.apellidos }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Email:</strong> {{ usuario.email }}
+                </li>
+                <li class="list-group-item">
+                    <strong>Rol:</strong> {{ usuario.get_rol_display }}
+                </li>
+            </ul>
+
+            <!-- Botón para cambiar contraseña -->
+            <a href="{% url 'cambiar_contrasena' %}" class="btn btn-orange-dark w-100">
+                🔑 Cambiar contraseña
+            </a>
+        </div>
+    </div>
+
+    <!-- Si el usuario es ciudadano, mostrar sus propiedades -->
+    {% if usuario.rol == "ciudadano" %}
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-blue-mid text-white">
+            <h5 class="mb-0">Mis Propiedades</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for propiedad in usuario.propiedades.all %}
+                    <li class="list-group-item">
+                        {{ propiedad.direccion }} — {{ propiedad.ciudad }}, {{ propiedad.departamento }}
+                        {% if not propiedad.activa %}
+                            <span class="badge bg-secondary">Inactiva</span>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No tienes propiedades registradas.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Si el usuario es ciudadano, mostrar sus PQR -->
+    {% if usuario.rol == "ciudadano" %}
+    <div class="card shadow-sm mt-4">
+        <div class="card-header bg-blue-mid text-white">
+            <h5 class="mb-0">Mis PQR</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for pqr in usuario.pqr_set.all %}
+                    <li class="list-group-item">
+                        <strong>ID:</strong> {{ pqr.id }} — {{ pqr.descripcion }}
+                        <span class="badge bg-info">{{ pqr.estado }}</span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No has creado PQR aún.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}

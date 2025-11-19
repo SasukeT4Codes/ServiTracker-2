@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block title %}Editar Usuario | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-blue-mid text-white">
+            <h4 class="mb-0">Editar usuario</h4>
+        </div>
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+
+                <!-- Documento -->
+                <div class="col-md-6">
+                    {{ form.documento.label_tag }}
+                    {{ form.documento|add_class:"form-control" }}
+                </div>
+
+                <!-- Nombre -->
+                <div class="col-md-6">
+                    {{ form.nombres.label_tag }}
+                    {{ form.nombres|add_class:"form-control" }}
+                </div>
+
+                <!-- Apellido -->
+                <div class="col-md-6">
+                    {{ form.apellidos.label_tag }}
+                    {{ form.apellidos|add_class:"form-control" }}
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6">
+                    {{ form.email.label_tag }}
+                    {{ form.email|add_class:"form-control" }}
+                </div>
+
+                <!-- Rol -->
+                <div class="col-md-6">
+                    {{ form.rol.label_tag }}
+                    {{ form.rol|add_class:"form-select" }}
+                </div>
+
+                <!-- Especialidad -->
+                <div class="col-md-6">
+                    {{ form.especialidad.label_tag }}
+                    {{ form.especialidad|add_class:"form-control" }}
+                </div>
+
+                <!-- Estado -->
+                <div class="col-md-4 form-check">
+                    {{ form.is_active }}
+                    {{ form.is_active.label_tag }}
+                </div>
+                <div class="col-md-4 form-check">
+                    {{ form.is_staff }}
+                    {{ form.is_staff.label_tag }}
+                </div>
+                <div class="col-md-4 form-check">
+                    {{ form.is_superuser }}
+                    {{ form.is_superuser.label_tag }}
+                </div>
+
+                <!-- Nueva contraseña (solo admin, inline) -->
+                <div class="col-md-6">
+                    {{ form.nueva_contrasena.label_tag }}
+                    {{ form.nueva_contrasena|add_class:"form-control" }}
+                    <small class="form-text text-muted">
+                        Si deseas cambiar la contraseña de este usuario, ingrésala aquí.
+                    </small>
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-blue-mid w-100 mt-3">💾 Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-3 d-flex gap-2">
+        <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">⬅ Volver a la lista</a>
+        <!-- Botón alternativo para ir a la vista de resetear contraseña -->
+        <a href="{% url 'resetear_contrasena_usuario' usuario.pk %}" class="btn btn-orange-dark">
+            🔑 Resetear contraseña
+        </a>
+    </div>
+</div>
+{% endblock %}

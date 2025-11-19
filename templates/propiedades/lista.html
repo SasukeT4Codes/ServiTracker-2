@@ -1,33 +1,37 @@
 {% extends 'base.html' %}
-{% block title %}Mis Propiedades{% endblock %}
+{% block title %}Mis Propiedades | ServiTracker{% endblock %}
+
 {% block content %}
-<h2 class="text-blue-dark">Mis Propiedades</h2>
-<a href="{% url 'crear_propiedad' %}" class="btn btn-blue-mid mb-3">Agregar Propiedad</a>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Departamento</th>
-            <th>Ciudad</th>
-            <th>Dirección</th>
-            <th>Activa</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for propiedad in propiedades %}
-        <tr>
-            <td>{{ propiedad.departamento }}</td>
-            <td>{{ propiedad.ciudad }}</td>
-            <td>{{ propiedad.direccion }}</td>
-            <td>{{ propiedad.activa|yesno:"Sí,No" }}</td>
-            <td>
-                <a href="{% url 'editar_propiedad' propiedad.pk %}" class="btn btn-sm btn-orange-dark">Editar</a>
-                <a href="{% url 'eliminar_propiedad' propiedad.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="5">No tienes propiedades registradas.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container my-5">
+    <h2 class="text-blue-dark">Mis propiedades</h2>
+    <a href="{% url 'crear_propiedad' %}" class="btn btn-blue-mid mb-3">➕ Añadir propiedad</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Departamento</th>
+                <th>Activa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in propiedades %}
+            <tr>
+                <td>{{ p.direccion }}</td>
+                <td>{{ p.ciudad }}</td>
+                <td>{{ p.departamento }}</td>
+                <td>{{ p.activa|yesno:"Sí,No" }}</td>
+                <td>
+                    <a href="{% url 'editar_propiedad' p.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'eliminar_propiedad' p.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No tienes propiedades registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

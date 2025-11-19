@@ -20,7 +20,12 @@
         <tbody>
             {% for u in usuarios %}
             <tr>
-                <td>{{ u.documento }}</td>
+                <!-- Documento clickeable -->
+                <td>
+                    <a href="{% url 'detalle_usuario' u.pk %}" class="text-decoration-none text-blue-dark">
+                        {{ u.documento }}
+                    </a>
+                </td>
                 <td>{{ u.nombres }}</td>
                 <td>{{ u.apellidos }}</td>
                 <td>{{ u.email }}</td>
