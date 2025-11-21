@@ -16,10 +16,15 @@
                     </tr>
                     <tr>
                         <th scope="row">Propiedad</th>
-                        <td>
-                            {{ pqr.propiedad.direccion }}<br>
-                            {{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}
-                        </td>
+                        <td>{{ pqr.propiedad.direccion }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Departamento</th>
+                        <td>{{ pqr.propiedad.departamento }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Ciudad</th>
+                        <td>{{ pqr.propiedad.ciudad }}</td>
                     </tr>
                     <tr>
                         <th scope="row">Tipo de falla</th>
@@ -69,12 +74,16 @@
 
     <!-- Acciones -->
     <div class="mt-4 d-flex gap-3">
-        {% if user.rol in ["agente", "administrador"] %}
+        {% if user.rol == "agente" or user.rol == "administrador" %}
             <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-blue-mid">🛠️ Asignar técnico</a>
         {% endif %}
-        {% if user.rol in ["tecnico", "agente", "administrador"] and pqr.estado.nombre != "Resuelto" %}
-            <a href="{% url 'cerrar_pqr' pqr.pk %}" class="btn btn-green-dark">✅ Marcar como Resuelto</a>
+
+        {% if user.rol == "tecnico" or user.rol == "agente" or user.rol == "administrador" %}
+            {% if pqr.estado.nombre != "Resuelto" %}
+                <a href="{% url 'cerrar_pqr' pqr.pk %}" class="btn btn-green-dark">✅ Marcar como Resuelto</a>
+            {% endif %}
         {% endif %}
+
         <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary">⬅️ Volver al Dashboard</a>
     </div>
 </div>
