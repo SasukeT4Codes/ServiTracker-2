@@ -20,4 +20,8 @@ urlpatterns = [
 
     # ✅ Cerrar/Resolver PQR (técnico/agente/admin)
     path('<int:pk>/cerrar/', views.cerrar_pqr, name='cerrar_pqr'),
+
+    # Ver los detalles del pqr
+    path('<int:pk>/detalle/', views.detalle_pqr, name='detalle_pqr'),
+
 ]

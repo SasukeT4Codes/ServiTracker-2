@@ -1,5 +1,7 @@
 [
   { "model": "pqr.estadopqr", "pk": 1, "fields": { "nombre": "Pendiente" } },
   { "model": "pqr.estadopqr", "pk": 2, "fields": { "nombre": "En curso" } },
-  { "model": "pqr.estadopqr", "pk": 3, "fields": { "nombre": "Resuelto" } }
+  { "model": "pqr.estadopqr", "pk": 3, "fields": { "nombre": "Resuelto" } },
+  { "model": "pqr.estadopqr", "pk": 4, "fields": { "nombre": "Urgente" } },
+  { "model": "pqr.estadopqr", "pk": 5, "fields": { "nombre": "Muy urgente" } }
 ]

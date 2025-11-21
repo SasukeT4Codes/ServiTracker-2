@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}Detalle PQR #{{ pqr.id }} | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark mb-4">📋 Detalle de PQR #{{ pqr.id }}</h2>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title text-blue-mid">Información general</h5>
+            <table class="table table-borderless">
+                <tbody>
+                    <tr>
+                        <th scope="row">Ciudadano</th>
+                        <td>{{ pqr.ciudadano }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Propiedad</th>
+                        <td>
+                            {{ pqr.propiedad.direccion }}<br>
+                            {{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Tipo de falla</th>
+                        <td>{{ pqr.tipo_falla }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Descripción</th>
+                        <td>{{ pqr.descripcion }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Estado</th>
+                        <td>
+                            <span class="badge 
+                                {% if pqr.estado.nombre == 'Pendiente' %} bg-warning
+                                {% elif pqr.estado.nombre == 'En curso' %} bg-info
+                                {% elif pqr.estado.nombre == 'Resuelto' %} bg-success
+                                {% elif pqr.estado.nombre == 'Urgente' %} bg-danger
+                                {% elif pqr.estado.nombre == 'Muy urgente' %} bg-dark
+                                {% else %} bg-secondary
+                                {% endif %}">
+                                {{ pqr.estado.nombre }}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Técnico asignado</th>
+                        <td>
+                            {% if pqr.tecnico_asignado %}
+                                {{ pqr.tecnico_asignado }}
+                            {% else %}
+                                <span class="text-muted">No asignado</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Fecha de creación</th>
+                        <td>{{ pqr.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Última actualización</th>
+                        <td>{{ pqr.fecha_actualizacion|date:"d/m/Y H:i" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="mt-4 d-flex gap-3">
+        {% if user.rol in ["agente", "administrador"] %}
+            <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-blue-mid">🛠️ Asignar técnico</a>
+        {% endif %}
+        {% if user.rol in ["tecnico", "agente", "administrador"] and pqr.estado.nombre != "Resuelto" %}
+            <a href="{% url 'cerrar_pqr' pqr.pk %}" class="btn btn-green-dark">✅ Marcar como Resuelto</a>
+        {% endif %}
+        <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary">⬅️ Volver al Dashboard</a>
+    </div>
+</div>
+{% endblock %}

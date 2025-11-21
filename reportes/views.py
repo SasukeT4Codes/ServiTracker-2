@@ -89,7 +89,7 @@ def dashboard_agente(request):
 # 📊 Dashboard del técnico
 @user_passes_test(lambda u: u.rol == "tecnico")
 def dashboard_tecnico(request):
-    pqr_asignadas = PQR.objects.filter(tecnico=request.user)
+    pqr_asignadas = PQR.objects.filter(tecnico_asignado=request.user)
     return render(request, "reportes/dashboard_tecnico.html", {
         "usuario": request.user,
         "pqr_asignadas": pqr_asignadas,

@@ -4,7 +4,6 @@
 {% block content %}
 <h2 class="text-blue-dark">Panel de Control del Administrador</h2>
 
-
 <!-- Contadores -->
 <div class="row mb-4">
     <div class="col-md-4">
@@ -33,7 +32,6 @@
     </div>
 </div>
 
-
 <!-- Acciones administrativas -->
 <h3 class="text-blue-mid">Acciones administrativas</h3>
 <div class="row mb-4">
@@ -53,7 +51,6 @@
         </a>
     </div>
 </div>
-
 
 <hr>
 
@@ -109,7 +106,7 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Propiedad</th>
+            <th>Ubicación</th>
             <th>Ciudadano</th>
             <th>Tipo de falla</th>
             <th>Descripción</th>
@@ -120,7 +117,11 @@
         {% for pqr in pqr_pendientes %}
         <tr>
             <td>{{ pqr.id }}</td>
-            <td>{{ pqr.propiedad }}</td>
+            <td>
+                <a href="{% url 'detalle_pqr' pqr.pk %}" class="text-blue-dark text-decoration-none">
+                    {{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}
+                </a>
+            </td>
             <td>{{ pqr.ciudadano }}</td>
             <td>{{ pqr.tipo_falla }}</td>
             <td>{{ pqr.descripcion }}</td>

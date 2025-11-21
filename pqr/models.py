@@ -1,6 +1,7 @@
-# pqr/models.py
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
 from propiedades.models import Propiedad
 
 class TipoFalla(models.Model):
@@ -50,3 +51,15 @@ class PQR(models.Model):
 
     def __str__(self):
         return f"PQR #{self.id} - {self.tipo_falla.nombre} ({self.estado.nombre})"
+
+    def actualizar_estado_urgencia(self):
+        if self.estado.nombre == "Pendiente":
+            dias = (timezone.now() - self.fecha_creacion).days
+            if dias >= 7:
+                urgente = EstadoPQR.objects.get(nombre="Muy urgente")
+                self.estado = urgente
+                self.save()
+            elif dias >= 3:
+                urgente = EstadoPQR.objects.get(nombre="Urgente")
+                self.estado = urgente
+                self.save()

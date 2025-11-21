@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import PQR, EstadoPQR, Propiedad
+from django.db.models import Count
+from .models import PQR, EstadoPQR, Propiedad, TipoFalla
 from .forms import PQRForm, AsignarTecnicoForm
 
 # 📋 Listar PQR del ciudadano
@@ -13,6 +14,9 @@ def mi_lista_pqr(request):
 @user_passes_test(lambda u: u.rol in ["agente", "administrador"])
 def lista_pqr_admin(request):
     pqr_list = PQR.objects.all()
+    # actualizar estados urgentes
+    for pqr in pqr_list:
+        pqr.actualizar_estado_urgencia()
     return render(request, 'pqr/lista.html', {'pqr_list': pqr_list})
 
 # ➕ Crear nuevo PQR (ciudadano)
@@ -96,3 +100,55 @@ def cerrar_pqr(request, pk):
         else:
             return redirect('dashboard_admin')
     return render(request, 'pqr/cerrar.html', {'pqr': pqr})
+
+# 📊 Dashboard Administrador
+@user_passes_test(lambda u: u.rol == "administrador")
+def dashboard_admin(request):
+    pendientes = PQR.objects.filter(estado__nombre="Pendiente").count()
+    en_curso = PQR.objects.filter(estado__nombre="En curso").count()
+    resueltos = PQR.objects.filter(estado__nombre="Resuelto").count()
+
+    # estadísticas por ciudad
+    estadisticas_ciudad = {}
+    ciudades = Propiedad.objects.values("ciudad").distinct()
+    for c in ciudades:
+        ciudad = c["ciudad"]
+        estadisticas_ciudad[ciudad] = {
+            "pendientes": PQR.objects.filter(propiedad__ciudad=ciudad, estado__nombre="Pendiente").count(),
+            "resueltos": PQR.objects.filter(propiedad__ciudad=ciudad, estado__nombre="Resuelto").count(),
+        }
+
+    # filtros
+    ciudad = request.GET.get("ciudad", "")
+    tipo_falla_id = request.GET.get("tipo_falla", "")
+    pqr_pendientes = PQR.objects.filter(estado__nombre="Pendiente")
+    if ciudad:
+        pqr_pendientes = pqr_pendientes.filter(propiedad__ciudad__icontains=ciudad)
+    if tipo_falla_id:
+        pqr_pendientes = pqr_pendientes.filter(tipo_falla_id=tipo_falla_id)
+
+    tipos_falla = TipoFalla.objects.all()
+
+    return render(request, "pqr/dashboard_admin.html", {
+        "pendientes": pendientes,
+        "en_curso": en_curso,
+        "resueltos": resueltos,
+        "estadisticas_ciudad": estadisticas_ciudad,
+        "pqr_pendientes": pqr_pendientes,
+        "ciudad": ciudad,
+        "tipo_falla_id": tipo_falla_id,
+        "tipos_falla": tipos_falla,
+    })
+
+# 📋 Detalle de PQR
+@login_required
+@user_passes_test(lambda u: u.rol in ["agente", "administrador", "tecnico"])
+def detalle_pqr(request, pk):
+    pqr = get_object_or_404(PQR, pk=pk)
+    # actualizar urgencia al entrar
+    if pqr.estado.nombre in ["Pendiente", "Urgente", "Muy urgente"]:
+        try:
+            pqr.actualizar_estado_urgencia()
+        except Exception:
+            pass
+    return render(request, 'pqr/detalle_pqr.html', {'pqr': pqr})
