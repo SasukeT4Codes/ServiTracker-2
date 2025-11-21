@@ -38,7 +38,6 @@
                 <td>
                     {% if pqr.estado.nombre == "Pendiente" %}
                         <a href="{% url 'editar_pqr' pqr.pk %}" class="btn btn-sm btn-orange-dark">Editar</a>
-                        <a href="{% url 'eliminar_pqr' pqr.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
                     {% endif %}
                 </td>
             </tr>
