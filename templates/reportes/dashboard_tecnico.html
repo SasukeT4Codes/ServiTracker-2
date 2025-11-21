@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Técnico | ServiTracker{% endblock %}
+
+{% block content %}
+<h2 class="text-blue-dark">Panel del Técnico</h2>
+
+<!-- Contadores -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">PQR Asignadas</h5>
+                <p class="display-6">{{ pqr_asignadas.count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">En Curso</h5>
+                <p class="display-6">{{ pqr_asignadas|dictsort:"estado.nombre"|length }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h5 class="card-title">Resueltas</h5>
+                <p class="display-6">
+                    {{ pqr_asignadas|filter:"estado.nombre=Resuelto"|length }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<!-- Listado de PQR asignadas -->
+<h3 class="text-blue-mid">Mis PQR asignadas</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ubicación</th>
+            <th>Ciudadano</th>
+            <th>Tipo de falla</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in pqr_asignadas %}
+        <tr>
+            <td>{{ pqr.id }}</td>
+            <td>{{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}</td>
+            <td>{{ pqr.ciudadano }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.descripcion }}</td>
+            <td>{{ pqr.estado.nombre }}</td>
+            <td>
+                {% if pqr.estado.nombre != "Resuelto" %}
+                    <a href="{% url 'cerrar_pqr' pqr.pk %}" class="btn btn-sm btn-green-dark">Marcar como Resuelto</a>
+                {% else %}
+                    <span class="text-muted">Ya resuelto</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No tienes PQR asignadas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

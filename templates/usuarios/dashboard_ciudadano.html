@@ -14,7 +14,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">🏠 Mis Propiedades</h5>
                     <p class="card-text">Consulta tus propiedades registradas.</p>
-                    <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-blue-mid w-100">Ver propiedades</a>
+                    <a href="{% url 'lista_propiedades' %}" class="btn btn-blue-mid w-100">Ver propiedades</a>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">📄 Mis PQR</h5>
                     <p class="card-text">Revisa el estado de tus reportes y crea nuevos.</p>
-                    <a href="{% url 'lista_pqr' %}" class="btn btn-blue-mid w-100 mb-2">Gestionar PQR</a>
+                    <a href="{% url 'mi_lista_pqr' %}" class="btn btn-blue-mid w-100 mb-2">Gestionar PQR</a>
                     <a href="{% url 'nuevo_pqr' %}" class="btn btn-green-dark w-100">➕ Crear nuevo PQR</a>
                 </div>
             </div>
@@ -81,7 +81,16 @@
                             {% for reporte in pqr %}
                                 <li class="list-group-item">
                                     <strong>ID:</strong> {{ reporte.id }} — {{ reporte.descripcion }}
-                                    <span class="badge bg-info">{{ reporte.estado.nombre }}</span>
+                                    <span class="badge 
+                                        {% if reporte.estado.nombre == 'Pendiente' %} bg-warning
+                                        {% elif reporte.estado.nombre == 'En curso' %} bg-info
+                                        {% elif reporte.estado.nombre == 'Resuelto' %} bg-success
+                                        {% elif reporte.estado.nombre == 'Urgente' %} bg-danger
+                                        {% elif reporte.estado.nombre == 'Muy urgente' %} bg-dark
+                                        {% else %} bg-secondary
+                                        {% endif %}">
+                                        {{ reporte.estado.nombre }}
+                                    </span>
                                 </li>
                             {% endfor %}
                         </ul>

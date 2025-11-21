@@ -65,7 +65,7 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Propiedad</th>
+            <th>Ubicación</th>
             <th>Ciudadano</th>
             <th>Tipo de falla</th>
             <th>Descripción</th>
@@ -76,7 +76,11 @@
         {% for pqr in pqr_pendientes %}
         <tr>
             <td>{{ pqr.id }}</td>
-            <td>{{ pqr.propiedad }}</td>
+            <td>
+                <a href="{% url 'detalle_pqr' pqr.pk %}" class="text-blue-dark text-decoration-none">
+                    {{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}
+                </a>
+            </td>
             <td>{{ pqr.ciudadano }}</td>
             <td>{{ pqr.tipo_falla }}</td>
             <td>{{ pqr.descripcion }}</td>
