@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Propiedad
 from .forms import PropiedadForm
 
@@ -42,3 +42,11 @@ def eliminar_propiedad(request, pk):
         propiedad.delete()
         return redirect('lista_propiedades')
     return render(request, 'propiedades/eliminar.html', {'propiedad': propiedad})
+
+# 🏠 Listar propiedades del ciudadano (solo el usuario autenticado)
+@login_required
+def mis_propiedades(request):
+    propiedades = Propiedad.objects.filter(usuario=request.user)
+    return render(request, 'propiedades/mis_propiedades.html', {
+        'propiedades': propiedades
+    })

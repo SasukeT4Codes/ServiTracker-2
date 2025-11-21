@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Mis Propiedades | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark">Mis Propiedades</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Departamento</th>
+                <th>Activa</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in propiedades %}
+            <tr>
+                <td>{{ p.direccion }}</td>
+                <td>{{ p.ciudad }}</td>
+                <td>{{ p.departamento }}</td>
+                <td>{{ p.activa|yesno:"Sí,No" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No tienes propiedades registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Botón volver -->
+    <div class="mt-4">
+        <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-secondary w-100 py-3">
+            ⬅️ Volver al Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
