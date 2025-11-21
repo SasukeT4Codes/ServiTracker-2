@@ -13,6 +13,9 @@ class RegistroForm(forms.ModelForm):
 
     # Campos adicionales dinámicos
     direccion = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    departamento = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    ciudad = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
     especialidad = forms.ModelChoiceField(
         queryset=Especialidad.objects.all(),
         required=False,
@@ -55,13 +58,13 @@ class RegistroForm(forms.ModelForm):
                     user.especialidad = self.cleaned_data["especialidad"]
                     user.save(update_fields=["especialidad"])
 
-            # Si es ciudadano → crear propiedad inicial
+            # Si es ciudadano → crear propiedad inicial con dirección completa
             if user.rol == "ciudadano" and self.cleaned_data.get("direccion"):
                 Propiedad.objects.create(
                     usuario=user,
-                    direccion=self.cleaned_data["direccion"],
-                    ciudad="Por definir",
-                    departamento="Por definir"
+                    direccion=self.cleaned_data.get("direccion"),
+                    departamento=self.cleaned_data.get("departamento") or "Por definir",
+                    ciudad=self.cleaned_data.get("ciudad") or "Por definir"
                 )
 
         return user

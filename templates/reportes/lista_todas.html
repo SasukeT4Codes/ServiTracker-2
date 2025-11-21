@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Todas las PQR | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark mb-4">📋 Todas las PQR</h2>
+
+    <!-- Filtros -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="ciudad" value="{{ ciudad }}" class="form-control" placeholder="Ciudad">
+        </div>
+        <div class="col-md-4">
+            <select name="tipo_falla" class="form-select">
+                <option value="">-- Tipo de falla --</option>
+                {% for falla in tipos_falla %}
+                    <option value="{{ falla.id }}" {% if falla.id|stringformat:"s" == tipo_falla_id %}selected{% endif %}>
+                        {{ falla.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-blue-mid w-100">Aplicar filtros</button>
+        </div>
+    </form>
+
+    <!-- Listado de todas las PQR -->
+    <table class="table table-striped shadow-sm">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>Departamento</th>
+                <th>Ciudad</th>
+                <th>Ciudadano</th>
+                <th>Tipo de falla</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pqr in pqr_list %}
+            <tr>
+                <td>{{ pqr.id }}</td>
+                <td>{{ pqr.propiedad.departamento }}</td>
+                <td>{{ pqr.propiedad.ciudad }}</td>
+                <td>{{ pqr.ciudadano }}</td>
+                <td>{{ pqr.tipo_falla }}</td>
+                <td>{{ pqr.descripcion }}</td>
+                <td>
+                    <span class="badge 
+                        {% if pqr.estado.nombre == 'Pendiente' %} bg-warning
+                        {% elif pqr.estado.nombre == 'En curso' %} bg-info
+                        {% elif pqr.estado.nombre == 'Resuelto' %} bg-success
+                        {% elif pqr.estado.nombre == 'Urgente' %} bg-danger
+                        {% elif pqr.estado.nombre == 'Muy urgente' %} bg-dark
+                        {% else %} bg-secondary
+                        {% endif %}">
+                        {{ pqr.estado.nombre }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'detalle_pqr' pqr.pk %}" class="btn btn-sm btn-secondary">Ver detalle</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="8" class="text-center text-muted">No hay PQR registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Botón volver al dashboard -->
+    <div class="mt-4">
+        <a href="{% url 'dashboard_admin' %}" class="btn btn-blue-dark w-100 py-3">
+            ⬅️ Volver al Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}
