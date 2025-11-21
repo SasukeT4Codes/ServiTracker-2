@@ -18,6 +18,19 @@ def index(request):
     contexto = {}
     if request.user.is_authenticated:
         contexto["usuario"] = request.user
+
+        if request.user.rol == "ciudadano":
+            contexto["pqr_list"] = PQR.objects.filter(ciudadano=request.user).order_by("-id")[:5]
+
+        elif request.user.rol == "tecnico":
+            contexto["asignaciones"] = PQR.objects.filter(tecnico_asignado=request.user).order_by("-id")[:5]
+
+        elif request.user.rol == "agente" or request.user.rol == "administrador" or request.user.is_staff:
+            contexto["pendientes"] = PQR.objects.filter(estado__nombre="Pendiente").count()
+            contexto["en_curso"] = PQR.objects.filter(estado__nombre="En curso").count()
+            contexto["resueltos"] = PQR.objects.filter(estado__nombre="Resuelto").count()
+            contexto["ultimos_pqr"] = PQR.objects.select_related("ciudadano", "propiedad", "estado").order_by("-id")[:5]
+
     return render(request, 'index.html', contexto)
 
 # 📝 Vista para registro público (usuario anónimo crea su propia cuenta)
@@ -104,7 +117,6 @@ def editar_usuario(request, pk):
             nueva_contrasena = form.cleaned_data.get("nueva_contrasena")
             if nueva_contrasena:
                 usuario.set_password(nueva_contrasena)
-            # 🔐 Limpieza de especialidad si el rol ya no es técnico
             if usuario.rol != "tecnico":
                 usuario.especialidad = None
             usuario.save()
