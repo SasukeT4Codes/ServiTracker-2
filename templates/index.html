@@ -4,14 +4,17 @@
 {% block title %}Inicio | ServiTracker{% endblock %}
 
 {% block content %}
-<section id="inicio" class="text-center my-5">
-    <img src="{% static 'img/ESSA-logo.png' %}" alt="ESSA Logo" class="mb-3" style="max-width:150px;">
+<section id="inicio" class="text-center my-2 position-relative overflow-hidden">
+    <!-- Fondo dinámico -->
+    <div id="banner-bg"></div>
+
+    <img src="{% static 'img/ESSA-logo.png' %}" alt="ESSA Logo" class="mb-3" style="max-width:150px; position:relative; z-index:1;">
 
     {% if user.is_authenticated %}
-        <h2 class="text-blue-dark">Hola {{ user.get_public_name }}</h2>
-        <p class="lead">Bienvenido a ServiTracker. Accede a tu panel para gestionar tus reportes y datos.</p>
+        <h2 class="text-blue-dark position-relative" style="z-index:1;">Hola {{ user.get_public_name }}</h2>
+        <p class="lead position-relative" style="z-index:1;">Bienvenido a ServiTracker. Accede a tu panel para gestionar tus reportes y datos.</p>
 
-        <div class="d-flex justify-content-center gap-3 mt-3">
+        <div class="d-flex justify-content-center gap-3 mt-3 position-relative" style="z-index:1;">
             {% if user.rol == "administrador" %}
                 <a href="{% url 'dashboard_admin' %}" class="btn btn-blue-mid">🔧 Ir al Dashboard</a>
             {% elif user.rol == "agente" %}
@@ -26,9 +29,9 @@
             <a href="{% url 'logout' %}" class="btn btn-secondary">Cerrar sesión</a>
         </div>
     {% else %}
-        <h2 class="text-blue-dark">Bienvenido a ServiTracker</h2>
-        <p class="lead">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
-        <div class="d-flex justify-content-center gap-3 mt-3">
+        <h2 class="text-blue-dark position-relative" style="z-index:1;">Bienvenido a ServiTracker</h2>
+        <p class="lead position-relative" style="z-index:1;">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
+        <div class="d-flex justify-content-center gap-3 mt-3 position-relative" style="z-index:1;">
             <a href="{% url 'login' %}" class="btn btn-blue-mid">🔐 Iniciar sesión</a>
             <a href="/pqr/rapida" class="btn btn-orange-dark">⚡ PQR rápida</a>
         </div>
@@ -41,7 +44,6 @@
     <h3 class="text-blue-mid">¿Quiénes somos?</h3>
     <p>
         ServiTracker se integra con la Electrificadora de Santander (ESSA), empresa del Grupo EPM que trabaja día a día por la construcción de territorios sostenibles y competitivos en la región. 
-        ESSA presta el servicio de energía eléctrica en Santander y zonas aledañas, con un compromiso firme hacia la innovación, la transparencia y la responsabilidad social empresarial.
     </p>
     <p>
         Nuestra misión es mejorar la comunicación entre ciudadanos y empresas de servicios públicos, facilitando el reporte y seguimiento de fallas, y apoyando la gestión de proyectos de energía limpia como la generación solar y la movilidad eléctrica.
@@ -56,10 +58,7 @@
                 <img src="{% static 'img/atencion.png' %}" class="card-img-top" alt="Atención">
                 <div class="card-body">
                     <h5 class="card-title">Atención al cliente</h5>
-                    <p class="card-text">
-                        ESSA ofrece múltiples canales de atención: oficinas presenciales, chat virtual, WhatsApp empresarial y asesoría en línea. 
-                        Además, puedes agendar citas y acceder a trámites como solicitudes de conexión, factibilidad del servicio y gestión de PQR.
-                    </p>
+                    <p class="card-text">Canales de atención: oficinas, chat virtual, WhatsApp empresarial y asesoría en línea.</p>
                 </div>
             </div>
         </div>
@@ -68,10 +67,7 @@
                 <img src="{% static 'img/empresas.png' %}" class="card-img-top" alt="Empresas">
                 <div class="card-body">
                     <h5 class="card-title">Empresas y comunidad</h5>
-                    <p class="card-text">
-                        ESSA conecta directamente con empresas y comunidades, ofreciendo soluciones energéticas integrales, programas de responsabilidad social y espacios de participación ciudadana. 
-                        También impulsa proyectos de innovación como la medida inteligente y la movilidad eléctrica.
-                    </p>
+                    <p class="card-text">Soluciones energéticas integrales, programas sociales y proyectos de innovación.</p>
                 </div>
             </div>
         </div>
@@ -80,33 +76,42 @@
                 <img src="{% static 'img/energia.png' %}" class="card-img-top" alt="Energía">
                 <div class="card-body">
                     <h5 class="card-title">Energía y sostenibilidad</h5>
-                    <p class="card-text">
-                        ESSA promueve el consumo responsable, la generación solar y la autogeneración de energía. 
-                        Sus proyectos buscan garantizar calidad, continuidad y sostenibilidad del servicio eléctrico en Santander, con inversiones en nuevas subestaciones y modernización de la red.
-                    </p>
+                    <p class="card-text">Promoción del consumo responsable, generación solar y modernización de la red.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
+<section id="extras" class="my-5 bg-blue-light p-4 rounded shadow-sm">
+    <h3 class="text-blue-dark text-center mb-3">🌟 ¿Por qué elegir ServiTracker?</h3>
+    <div class="row text-center">
+        <div class="col-md-4">
+            <h5 class="text-orange-dark">Rapidez</h5>
+            <p>Reporta fallas en segundos y recibe seguimiento inmediato.</p>
+        </div>
+        <div class="col-md-4">
+            <h5 class="text-orange-dark">Transparencia</h5>
+            <p>Consulta el estado de tus PQR en tiempo real.</p>
+        </div>
+        <div class="col-md-4">
+            <h5 class="text-orange-dark">Confiabilidad</h5>
+            <p>Respaldado por ESSA y el Grupo EPM.</p>
+        </div>
+    </div>
+</section>
+
 <section id="contacto" class="my-5">
     <h3 class="text-blue-mid">Contacto</h3>
-    <p>
-        ¿Tienes dudas o sugerencias? Escríbenos a <strong>essa@essa.com.co</strong> o utiliza nuestros canales de atención:
-    </p>
+    <p>¿Tienes dudas o sugerencias? Escríbenos a <strong>essa@essa.com.co</strong> o utiliza nuestros canales de atención:</p>
     <ul>
-        <li>Línea gratuita de servicio al cliente: <strong>01 8000 971 903</strong></li>
-        <li>WhatsApp empresarial: <strong>318 833 91 21</strong></li>
-        <li>Reporte de daños y emergencias: <strong>115</strong></li>
-        <li>Sede administrativa: Carrera 19 No. 24-56, Bucaramanga, Santander</li>
+        <li>Línea gratuita: <strong>01 8000 971 903</strong></li>
+        <li>WhatsApp: <strong>318 833 91 21</strong></li>
+        <li>Emergencias: <strong>115</strong></li>
+        <li>Sede: Carrera 19 No. 24-56, Bucaramanga</li>
     </ul>
-    <p>
-        También puedes seguirnos en redes sociales: 
-        <a href="https://www.facebook.com/ESSAgrupoEPM" target="_blank">Facebook</a>, 
-        <a href="https://twitter.com/ESSAGrupoEPM" target="_blank">Twitter</a>, 
-        <a href="https://www.instagram.com/essagrupoepm/" target="_blank">Instagram</a>, 
-        <a href="https://www.youtube.com/user/ESSAColombia" target="_blank">YouTube</a>.
-    </p>
 </section>
+
+<!-- JS dinámico -->
+<script src="{% static 'js/index.js' %}"></script>
 {% endblock %}

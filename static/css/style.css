@@ -6,7 +6,6 @@
   --yellow: #ffb703;
   --orange-light: #fd9e02;
   --orange-dark: #fb8500;
-
   --green-light: #198754;
   --green-dark: #146c43;
 }
@@ -31,17 +30,15 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f8f9fa;
-  padding-top: 70px; /* espacio para header fijo */
-
-  /* Empujar footer al fondo */
+  padding-top: 70px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
 main {
-  flex: 1; /* ocupa todo el espacio disponible */
-  min-height: 60vh; /* asegura altura mínima */
+  flex: 1;
+  min-height: 60vh;
 }
 
 /* Botones personalizados */
@@ -63,7 +60,6 @@ main {
   color: white;
 }
 
-
 .btn-green-dark {
   background-color: var(--green-light);
   color: white;
@@ -71,4 +67,27 @@ main {
 .btn-green-dark:hover {
   background-color: var(--green-dark);
   color: white;
+}
+
+/* Sección de inicio con fondo dinámico */
+#inicio {
+  position: relative;
+  min-height: 300px;
+  padding: 60px 20px 40px;
+  z-index: 0;
+  overflow: hidden;
+}
+
+#banner-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 300px;
+  z-index: -1;
+  background-image: url("/static/img/fondo1.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0.2;
+  transition: background-image 1s ease-in-out;
 }
