@@ -1,10 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Editar PQR{% endblock %}
 {% block content %}
-<h2 class="text-blue-dark">Editar PQR</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-orange-dark">Actualizar</button>
-</form>
+<div class="container my-5">
+    <h2 class="text-blue-dark mb-4">✏️ Editar PQR</h2>
+
+    <form method="post" class="card shadow-sm p-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_propiedad" class="form-label">🏠 Propiedad</label>
+            {{ form.propiedad }}
+        </div>
+        <div class="mb-3">
+            <label for="id_tipo_falla" class="form-label">⚡ Tipo de falla</label>
+            {{ form.tipo_falla }}
+        </div>
+        <div class="mb-3">
+            <label for="id_descripcion" class="form-label">📝 Descripción</label>
+            {{ form.descripcion }}
+        </div>
+        <button type="submit" class="btn btn-orange-dark w-100">Actualizar PQR</button>
+    </form>
+</div>
 {% endblock %}

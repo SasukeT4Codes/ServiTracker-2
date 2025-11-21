@@ -24,7 +24,7 @@
                 <td>{{ pqr.ciudadano }}</td>
                 <td>{{ pqr.tipo_falla }}</td>
                 <td>{{ pqr.descripcion }}</td>
-                <td>{{ pqr.estado }}</td>
+                <td>{{ pqr.estado.nombre }}</td>
                 <td>
                     {% if pqr.estado.nombre == "Pendiente" %}
                         <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-sm btn-blue-mid">Asignar técnico</a>

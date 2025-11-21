@@ -20,12 +20,10 @@ def lista_pqr_admin(request):
 def nuevo_pqr(request):
     if request.method == 'POST':
         form = PQRForm(request.POST)
-        # Filtrar propiedades del usuario autenticado
         form.fields['propiedad'].queryset = Propiedad.objects.filter(usuario=request.user)
         if form.is_valid():
             pqr = form.save(commit=False)
             pqr.ciudadano = request.user
-            # Estado inicial: Pendiente
             estado_pendiente = EstadoPQR.objects.get(nombre="Pendiente")
             pqr.estado = estado_pendiente
             pqr.save()
@@ -50,22 +48,11 @@ def editar_pqr(request, pk):
         form = PQRForm(instance=pqr)
     return render(request, 'pqr/editar.html', {'form': form})
 
-# ❌ Eliminar PQR (solo si está pendiente)
-@login_required
-def eliminar_pqr(request, pk):
-    pqr = get_object_or_404(PQR, pk=pk, ciudadano=request.user)
-    if pqr.estado.nombre != "Pendiente":
-        return redirect('mi_lista_pqr')
-    if request.method == 'POST':
-        pqr.delete()
-        return redirect('mi_lista_pqr')
-    return render(request, 'pqr/eliminar.html', {'pqr': pqr})
-
 # 🔧 Vista para técnicos: Mis asignaciones
 @login_required
 def mis_asignaciones(request):
     if request.user.rol != "tecnico":
-        return redirect('index')  # solo técnicos pueden entrar
+        return redirect('index')
     asignaciones = PQR.objects.filter(tecnico_asignado=request.user)
     return render(request, 'pqr/mis_asignaciones.html', {'asignaciones': asignaciones})
 
@@ -73,18 +60,16 @@ def mis_asignaciones(request):
 @login_required
 def asignar_tecnico(request, pk):
     if request.user.rol not in ["agente", "administrador"]:
-        return redirect('index')  # solo agentes y administradores pueden asignar
+        return redirect('index')
 
     pqr = get_object_or_404(PQR, pk=pk)
     if request.method == 'POST':
         form = AsignarTecnicoForm(request.POST, instance=pqr)
         if form.is_valid():
             pqr = form.save(commit=False)
-            # Cambiamos estado a "En curso"
             estado_en_curso = EstadoPQR.objects.get(nombre="En curso")
             pqr.estado = estado_en_curso
             pqr.save()
-            # Redirigir según rol
             if request.user.rol == "agente":
                 return redirect('dashboard_agente')
             else:
@@ -92,3 +77,22 @@ def asignar_tecnico(request, pk):
     else:
         form = AsignarTecnicoForm(instance=pqr)
     return render(request, 'pqr/asignar_tecnico.html', {'form': form, 'pqr': pqr})
+
+# ✅ Cerrar/Resolver PQR (técnico/agente/admin)
+@login_required
+def cerrar_pqr(request, pk):
+    if request.user.rol not in ["tecnico", "agente", "administrador"]:
+        return redirect('index')
+
+    pqr = get_object_or_404(PQR, pk=pk)
+    if request.method == 'POST':
+        estado_resuelto = EstadoPQR.objects.get(nombre="Resuelto")
+        pqr.estado = estado_resuelto
+        pqr.save()
+        if request.user.rol == "tecnico":
+            return redirect('mis_asignaciones')
+        elif request.user.rol == "agente":
+            return redirect('lista_pqr_admin')
+        else:
+            return redirect('dashboard_admin')
+    return render(request, 'pqr/cerrar.html', {'pqr': pqr})
