@@ -73,7 +73,13 @@ def logout_view(request):
 # 👤 Vista del perfil del usuario
 @login_required
 def perfil(request):
-    return render(request, 'usuarios/perfil.html', {'usuario': request.user})
+    usuario = request.user
+    pqr_list = PQR.objects.filter(ciudadano=usuario) if usuario.rol == "ciudadano" else []
+    return render(request, "usuarios/perfil.html", {
+        "usuario": usuario,
+        "pqr_list": pqr_list,
+    })
+
 
 # 📊 Dashboard del ciudadano
 @login_required

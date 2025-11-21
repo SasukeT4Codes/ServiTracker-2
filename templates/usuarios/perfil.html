@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}Mi Perfil | ServiTracker{% endblock %}
 
 {% block content %}
@@ -10,28 +9,18 @@
         </div>
         <div class="card-body">
             <ul class="list-group mb-3">
-                <li class="list-group-item">
-                    <strong>Documento:</strong> {{ usuario.documento }}
-                </li>
-                <li class="list-group-item">
-                    <strong>Nombre completo:</strong> {{ usuario.nombres }} {{ usuario.apellidos }}
-                </li>
-                <li class="list-group-item">
-                    <strong>Email:</strong> {{ usuario.email }}
-                </li>
-                <li class="list-group-item">
-                    <strong>Rol:</strong> {{ usuario.get_rol_display }}
-                </li>
+                <li class="list-group-item"><strong>Documento:</strong> {{ usuario.documento }}</li>
+                <li class="list-group-item"><strong>Nombre completo:</strong> {{ usuario.nombres }} {{ usuario.apellidos }}</li>
+                <li class="list-group-item"><strong>Email:</strong> {{ usuario.email }}</li>
+                <li class="list-group-item"><strong>Rol:</strong> {{ usuario.get_rol_display }}</li>
             </ul>
 
-            <!-- Botón para cambiar contraseña -->
             <a href="{% url 'cambiar_contrasena' %}" class="btn btn-orange-dark w-100">
                 🔑 Cambiar contraseña
             </a>
         </div>
     </div>
 
-    <!-- Si el usuario es ciudadano, mostrar sus propiedades -->
     {% if usuario.rol == "ciudadano" %}
     <div class="card shadow-sm mt-4">
         <div class="card-header bg-blue-mid text-white">
@@ -52,25 +41,14 @@
             </ul>
         </div>
     </div>
-    {% endif %}
 
-    <!-- Si el usuario es ciudadano, mostrar sus PQR -->
-    {% if usuario.rol == "ciudadano" %}
+    <!-- Reutilizar la plantilla de mis PQR -->
     <div class="card shadow-sm mt-4">
         <div class="card-header bg-blue-mid text-white">
             <h5 class="mb-0">Mis PQR</h5>
         </div>
         <div class="card-body">
-            <ul class="list-group">
-                {% for pqr in usuario.pqr_set.all %}
-                    <li class="list-group-item">
-                        <strong>ID:</strong> {{ pqr.id }} — {{ pqr.descripcion }}
-                        <span class="badge bg-info">{{ pqr.estado }}</span>
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">No has creado PQR aún.</li>
-                {% endfor %}
-            </ul>
+            {% include "pqr/mi-lista.html" %}
         </div>
     </div>
     {% endif %}
