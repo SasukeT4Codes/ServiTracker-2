@@ -15,17 +15,10 @@ Usuario = get_user_model()
 
 # 🌐 Vista principal del sitio (landing page)
 def index(request):
+    contexto = {}
     if request.user.is_authenticated:
-        if request.user.rol == "ciudadano":
-            return redirect("dashboard_ciudadano")
-        elif request.user.rol == "agente":
-            return redirect("dashboard_agente")
-        elif request.user.rol == "tecnico":
-            return redirect("dashboard_tecnico")
-        elif request.user.is_staff or request.user.rol == "administrador":
-            return redirect("dashboard_admin")
-        return render(request, 'index.html', {"usuario": request.user})
-    return render(request, 'index.html')
+        contexto["usuario"] = request.user
+    return render(request, 'index.html', contexto)
 
 # 📝 Vista para registro público (usuario anónimo crea su propia cuenta)
 def registro(request):
@@ -127,7 +120,7 @@ def editar_usuario(request, pk):
         propiedades = Propiedad.objects.filter(usuario=usuario)
         pqr_creados = PQR.objects.filter(ciudadano=usuario)
     elif usuario.rol == "tecnico":
-        pqr_asignados = PQR.objects.filter(tecnico=usuario)
+        pqr_asignados = PQR.objects.filter(tecnico_asignado=usuario)
 
     return render(request, "usuarios/editar_usuario.html", {
         "usuario": usuario,

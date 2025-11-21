@@ -28,18 +28,62 @@
             {% endif %}
             <a href="{% url 'logout' %}" class="btn btn-secondary">Cerrar sesión</a>
         </div>
+
+        <!-- Resumen rápido de PQR -->
+        <div class="row mt-5">
+            <div class="col-md-6 offset-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-blue-mid text-white">
+                        <h5 class="mb-0">📄 Resumen rápido de tus PQR</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if user.rol == "ciudadano" %}
+                            {% with pqr_list=PQR.objects.filter(ciudadano=user) %}
+                                {% if pqr_list %}
+                                    <ul class="list-group">
+                                        {% for reporte in pqr_list|slice:":5" %}
+                                            <li class="list-group-item">
+                                                <strong>ID:</strong> {{ reporte.id }} — {{ reporte.descripcion }}
+                                                <span class="badge 
+                                                    {% if reporte.estado.nombre == 'Pendiente' %} bg-warning
+                                                    {% elif reporte.estado.nombre == 'En curso' %} bg-info
+                                                    {% elif reporte.estado.nombre == 'Resuelto' %} bg-success
+                                                    {% elif reporte.estado.nombre == 'Urgente' %} bg-danger
+                                                    {% elif reporte.estado.nombre == 'Muy urgente' %} bg-dark
+                                                    {% else %} bg-secondary
+                                                    {% endif %}">
+                                                    {{ reporte.estado.nombre }}
+                                                </span>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <div class="mt-3 text-center">
+                                        <a href="{% url 'mi_lista_pqr' %}" class="btn btn-blue-mid">Ver todas mis PQR</a>
+                                    </div>
+                                {% else %}
+                                    <p>No has creado PQR aún.</p>
+                                {% endif %}
+                            {% endwith %}
+                        {% else %}
+                            <p>Accede a tu dashboard para ver tus reportes.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
     {% else %}
         <h2 class="text-blue-dark position-relative" style="z-index:1;">Bienvenido a ServiTracker</h2>
         <p class="lead position-relative" style="z-index:1;">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
         <div class="d-flex justify-content-center gap-3 mt-3 position-relative" style="z-index:1;">
             <a href="{% url 'login' %}" class="btn btn-blue-mid">🔐 Iniciar sesión</a>
-            <a href="/pqr/rapida" class="btn btn-orange-dark">⚡ PQR rápida</a>
+            <a href="{% url 'nuevo_pqr' %}" class="btn btn-orange-dark">⚡ PQR rápida</a>
         </div>
     {% endif %}
 </section>
 
 <hr>
 
+<!-- Secciones informativas -->
 <section id="nosotros" class="my-5">
     <h3 class="text-blue-mid">¿Quiénes somos?</h3>
     <p>
