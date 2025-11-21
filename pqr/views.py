@@ -14,7 +14,6 @@ def mi_lista_pqr(request):
 @user_passes_test(lambda u: u.rol in ["agente", "administrador"])
 def lista_pqr_admin(request):
     pqr_list = PQR.objects.all()
-    # actualizar estados urgentes
     for pqr in pqr_list:
         pqr.actualizar_estado_urgencia()
     return render(request, 'pqr/lista.html', {'pqr_list': pqr_list})
@@ -60,12 +59,11 @@ def mis_asignaciones(request):
     asignaciones = PQR.objects.filter(tecnico_asignado=request.user)
     return render(request, 'pqr/mis_asignaciones.html', {'asignaciones': asignaciones})
 
-# 🛠️ Vista para agentes/administradores: asignar técnico a un PQR
+# 🛠️ Asignar técnico
 @login_required
 def asignar_tecnico(request, pk):
     if request.user.rol not in ["agente", "administrador"]:
         return redirect('index')
-
     pqr = get_object_or_404(PQR, pk=pk)
     if request.method == 'POST':
         form = AsignarTecnicoForm(request.POST, instance=pqr)
@@ -74,20 +72,34 @@ def asignar_tecnico(request, pk):
             estado_en_curso = EstadoPQR.objects.get(nombre="En curso")
             pqr.estado = estado_en_curso
             pqr.save()
-            if request.user.rol == "agente":
-                return redirect('dashboard_agente')
-            else:
-                return redirect('dashboard_admin')
+            return redirect('dashboard_admin' if request.user.rol == "administrador" else 'dashboard_agente')
     else:
         form = AsignarTecnicoForm(instance=pqr)
     return render(request, 'pqr/asignar_tecnico.html', {'form': form, 'pqr': pqr})
 
-# ✅ Cerrar/Resolver PQR (técnico/agente/admin)
+# ✏️ Editar estado del PQR
+@login_required
+@user_passes_test(lambda u: u.rol in ["agente", "administrador"])
+def editar_estado_pqr(request, pk):
+    pqr = get_object_or_404(PQR, pk=pk)
+    if request.method == "POST":
+        nuevo_estado_id = request.POST.get("estado")
+        if nuevo_estado_id:
+            nuevo_estado = get_object_or_404(EstadoPQR, pk=nuevo_estado_id)
+            pqr.estado = nuevo_estado
+            pqr.save()
+        return redirect("detalle_pqr", pk=pqr.pk)
+    estados = EstadoPQR.objects.all()
+    return render(request, "pqr/detalle_pqr.html", {
+        "pqr": pqr,
+        "estados": estados,
+    })
+
+# ✅ Cerrar PQR
 @login_required
 def cerrar_pqr(request, pk):
     if request.user.rol not in ["tecnico", "agente", "administrador"]:
         return redirect('index')
-
     pqr = get_object_or_404(PQR, pk=pk)
     if request.method == 'POST':
         estado_resuelto = EstadoPQR.objects.get(nombre="Resuelto")
@@ -101,14 +113,13 @@ def cerrar_pqr(request, pk):
             return redirect('dashboard_admin')
     return render(request, 'pqr/cerrar.html', {'pqr': pqr})
 
-# 📊 Dashboard Administrador
+# 📊 Dashboard admin
 @user_passes_test(lambda u: u.rol == "administrador")
 def dashboard_admin(request):
     pendientes = PQR.objects.filter(estado__nombre="Pendiente").count()
     en_curso = PQR.objects.filter(estado__nombre="En curso").count()
     resueltos = PQR.objects.filter(estado__nombre="Resuelto").count()
 
-    # estadísticas por ciudad
     estadisticas_ciudad = {}
     ciudades = Propiedad.objects.values("ciudad").distinct()
     for c in ciudades:
@@ -118,7 +129,6 @@ def dashboard_admin(request):
             "resueltos": PQR.objects.filter(propiedad__ciudad=ciudad, estado__nombre="Resuelto").count(),
         }
 
-    # filtros
     ciudad = request.GET.get("ciudad", "")
     tipo_falla_id = request.GET.get("tipo_falla", "")
     pqr_pendientes = PQR.objects.filter(estado__nombre="Pendiente")
@@ -145,10 +155,13 @@ def dashboard_admin(request):
 @user_passes_test(lambda u: u.rol in ["agente", "administrador", "tecnico"])
 def detalle_pqr(request, pk):
     pqr = get_object_or_404(PQR, pk=pk)
-    # actualizar urgencia al entrar
     if pqr.estado.nombre in ["Pendiente", "Urgente", "Muy urgente"]:
         try:
             pqr.actualizar_estado_urgencia()
         except Exception:
             pass
-    return render(request, 'pqr/detalle_pqr.html', {'pqr': pqr})
+    estados = EstadoPQR.objects.all() if request.user.rol in ["agente", "administrador"] else []
+    return render(request, 'pqr/detalle_pqr.html', {
+        'pqr': pqr,
+        'estados': estados,
+    })

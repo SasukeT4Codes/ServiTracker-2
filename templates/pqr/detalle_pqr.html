@@ -47,8 +47,22 @@
                                 {% endif %}">
                                 {{ pqr.estado.nombre }}
                             </span>
+
+                            {% if user.rol == "agente" or user.rol == "administrador" %}
+                                <form method="post" action="{% url 'editar_estado_pqr' pqr.pk %}" class="d-inline ms-3">
+                                    {% csrf_token %}
+                                    <select name="estado" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                                        {% for estado in estados %}
+                                            <option value="{{ estado.id }}" {% if estado.id == pqr.estado.id %}selected{% endif %}>
+                                                {{ estado.nombre }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            {% endif %}
                         </td>
                     </tr>
+
                     <tr>
                         <th scope="row">Técnico asignado</th>
                         <td>
@@ -76,6 +90,7 @@
     <div class="mt-4 d-flex gap-3">
         {% if user.rol == "agente" or user.rol == "administrador" %}
             <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-blue-mid">🛠️ Asignar técnico</a>
+            <a href="{% url 'editar_estado_pqr' pqr.pk %}" class="btn btn-orange-dark">✏️ Editar estado</a>
         {% endif %}
 
         {% if user.rol == "tecnico" or user.rol == "agente" or user.rol == "administrador" %}
