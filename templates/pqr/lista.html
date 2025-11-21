@@ -1,37 +1,40 @@
 {% extends 'base.html' %}
-{% block title %}Mis PQR{% endblock %}
+{% block title %}Todos los PQR{% endblock %}
 {% block content %}
-<h2 class="text-blue-dark">Mis PQR</h2>
-<a href="{% url 'crear_pqr' %}" class="btn btn-blue-mid mb-3">Crear PQR</a>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Propiedad</th>
-            <th>Tipo de falla</th>
-            <th>Descripción</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pqr in pqr_list %}
-        <tr>
-            <td>{{ pqr.id }}</td>
-            <td>{{ pqr.propiedad }}</td>
-            <td>{{ pqr.tipo_falla }}</td>
-            <td>{{ pqr.descripcion }}</td>
-            <td>{{ pqr.estado }}</td>
-            <td>
-                {% if pqr.estado.nombre == "Pendiente" %}
-                    <a href="{% url 'editar_pqr' pqr.pk %}" class="btn btn-sm btn-orange-dark">Editar</a>
-                    <a href="{% url 'eliminar_pqr' pqr.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="6">No tienes PQR registrados.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="container my-5">
+    <h2 class="text-blue-dark">Todos los PQR</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Propiedad</th>
+                <th>Ciudadano</th>
+                <th>Tipo de falla</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pqr in pqr_list %}
+            <tr>
+                <td>{{ pqr.id }}</td>
+                <td>{{ pqr.propiedad }}</td>
+                <td>{{ pqr.ciudadano }}</td>
+                <td>{{ pqr.tipo_falla }}</td>
+                <td>{{ pqr.descripcion }}</td>
+                <td>{{ pqr.estado }}</td>
+                <td>
+                    {% if pqr.estado.nombre == "Pendiente" %}
+                        <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-sm btn-blue-mid">Asignar técnico</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">No hay PQR registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

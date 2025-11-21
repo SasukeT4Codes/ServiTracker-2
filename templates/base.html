@@ -18,8 +18,9 @@
     <!-- Header fijo con navegación -->
     <header class="navbar navbar-expand-lg navbar-dark bg-blue-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'index' %}">ServiTracker</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <a class="navbar-brand fw-bold" href="{% url 'index' %}">ServiTracker</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <nav class="collapse navbar-collapse" id="navbarNav">
@@ -31,15 +32,15 @@
 
                     <!-- Opciones dinámicas según autenticación -->
                     {% if user.is_authenticated %}
-                        {% if user.rol == "administrador" or user.rol == "agente" %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
-                        {% endif %}
-
-                        {% if user.rol == "ciudadano" %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'lista_pqr' %}">Mis PQR</a></li>
-                        {% endif %}
-
-                        {% if user.rol == "tecnico" %}
+                        {% if user.rol == "administrador" %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard_admin' %}">Dashboard Admin</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'lista_pqr_admin' %}">Gestionar PQR</a></li>
+                        {% elif user.rol == "agente" %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'dashboard_agente' %}">Dashboard Agente</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'lista_pqr_admin' %}">Gestionar PQR</a></li>
+                        {% elif user.rol == "ciudadano" %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'mi_lista_pqr' %}">Mis PQR</a></li>
+                        {% elif user.rol == "tecnico" %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'mis_asignaciones' %}">Mis asignaciones</a></li>
                         {% endif %}
 

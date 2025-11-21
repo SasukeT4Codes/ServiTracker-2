@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Todas las Propiedades | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark">Todas las propiedades registradas</h2>
+    <a href="{% url 'crear_propiedad' %}" class="btn btn-blue-mid mb-3">➕ Añadir propiedad</a>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Usuario</th>
+                <th>Dirección</th>
+                <th>Ciudad</th>
+                <th>Departamento</th>
+                <th>Activa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in propiedades %}
+            <tr>
+                <td>{{ p.usuario }}</td>
+                <td>{{ p.direccion }}</td>
+                <td>{{ p.ciudad }}</td>
+                <td>{{ p.departamento }}</td>
+                <td>{{ p.activa|yesno:"Sí,No" }}</td>
+                <td>
+                    <a href="{% url 'editar_propiedad' p.pk %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'eliminar_propiedad' p.pk %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay propiedades registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

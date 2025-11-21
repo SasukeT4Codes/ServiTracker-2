@@ -13,8 +13,8 @@
             <div class="card shadow-sm h-100">
                 <div class="card-body text-center">
                     <h5 class="card-title">🏠 Mis Propiedades</h5>
-                    <p class="card-text">Consulta y administra tus propiedades registradas.</p>
-                    <a href="{% url 'perfil' %}#propiedades" class="btn btn-blue-mid w-100">Ver propiedades</a>
+                    <p class="card-text">Consulta tus propiedades registradas.</p>
+                    <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-blue-mid w-100">Ver propiedades</a>
                 </div>
             </div>
         </div>
@@ -25,7 +25,8 @@
                 <div class="card-body text-center">
                     <h5 class="card-title">📄 Mis PQR</h5>
                     <p class="card-text">Revisa el estado de tus reportes y crea nuevos.</p>
-                    <a href="{% url 'mis_pqr' %}" class="btn btn-blue-mid w-100">Gestionar PQR</a>
+                    <a href="{% url 'lista_pqr' %}" class="btn btn-blue-mid w-100 mb-2">Gestionar PQR</a>
+                    <a href="{% url 'nuevo_pqr' %}" class="btn btn-green-dark w-100">➕ Crear nuevo PQR</a>
                 </div>
             </div>
         </div>
@@ -80,7 +81,7 @@
                             {% for reporte in pqr %}
                                 <li class="list-group-item">
                                     <strong>ID:</strong> {{ reporte.id }} — {{ reporte.descripcion }}
-                                    <span class="badge bg-info">{{ reporte.estado }}</span>
+                                    <span class="badge bg-info">{{ reporte.estado.nombre }}</span>
                                 </li>
                             {% endfor %}
                         </ul>

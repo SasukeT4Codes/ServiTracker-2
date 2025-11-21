@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Nuevo PQR | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark mb-4">Crear nuevo PQR</h2>
+    <p class="lead">Selecciona una de tus propiedades y describe la falla.</p>
+
+    <form method="post" class="card shadow-sm p-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_propiedad" class="form-label">🏠 Propiedad</label>
+            {{ form.propiedad }}
+        </div>
+        <div class="mb-3">
+            <label for="id_tipo_falla" class="form-label">⚡ Tipo de falla</label>
+            {{ form.tipo_falla }}
+        </div>
+        <div class="mb-3">
+            <label for="id_descripcion" class="form-label">📝 Descripción</label>
+            {{ form.descripcion }}
+        </div>
+        <button type="submit" class="btn btn-blue-mid w-100">Guardar PQR</button>
+    </form>
+</div>
+{% endblock %}
