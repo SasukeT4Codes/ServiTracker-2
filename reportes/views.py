@@ -91,11 +91,31 @@ def dashboard_agente(request):
 # 📊 Dashboard del técnico
 @user_passes_test(lambda u: u.rol == "tecnico")
 def dashboard_tecnico(request):
+    # Todas las PQR asignadas a este técnico
     pqr_asignadas = PQR.objects.filter(tecnico_asignado=request.user)
-    return render(request, "reportes/dashboard_tecnico.html", {
+
+    # Primeras 5 asignadas (ordenadas por fecha de creación ascendente)
+    primeras_asignadas = pqr_asignadas.order_by("fecha_creacion")[:5]
+
+    # Últimas 5 resueltas por este técnico
+    ultimas_resueltas = pqr_asignadas.filter(estado__nombre="Resuelto").order_by("-fecha_actualizacion")[:5]
+
+    # Contadores
+    asignadas = pqr_asignadas.count()
+    en_curso = pqr_asignadas.filter(estado__nombre="En curso").count()
+    resueltas = pqr_asignadas.filter(estado__nombre="Resuelto").count()
+
+    contexto = {
         "usuario": request.user,
         "pqr_asignadas": pqr_asignadas,
-    })
+        "primeras_asignadas": primeras_asignadas,
+        "ultimas_resueltas": ultimas_resueltas,
+        "asignadas": asignadas,
+        "en_curso": en_curso,
+        "resueltas": resueltas,
+    }
+    return render(request, "reportes/dashboard_tecnico.html", contexto)
+
 
 
 # 📋 Todas las PQR (con filtros)

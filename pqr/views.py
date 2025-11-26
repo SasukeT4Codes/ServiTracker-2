@@ -15,7 +15,7 @@ def mi_lista_pqr(request):
     paginator = Paginator(pqr_queryset, 10)  # 10 PQR por página
     page_number = request.GET.get("page")
     pqr_list = paginator.get_page(page_number)
-    return render(request, 'pqr/mi-lista.html', {'pqr_list': pqr_list})
+    return render(request, 'pqr/mis_pqr.html', {'pqr_list': pqr_list})
 
 # 📋 Listar todos los PQR (solo admin/agente, con paginación)
 @user_passes_test(lambda u: u.rol in ["agente", "administrador"])

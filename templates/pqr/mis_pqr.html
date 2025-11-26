@@ -4,9 +4,6 @@
 <div class="container my-5">
     <h2 class="text-blue-dark">Mis PQR</h2>
 
-    <!-- Botón para crear nuevo PQR -->
-    <a href="{% url 'nuevo_pqr' %}" class="btn btn-blue-mid mb-3">➕ Crear PQR</a>
-
     <table class="table table-striped">
         <thead>
             <tr>
@@ -70,10 +67,13 @@
         </ul>
     </nav>
 
-    <!-- Botón volver -->
-    <div class="mt-4">
-        <a href="{% url 'perfil' %}" class="btn btn-secondary w-100 py-3">
-            ⬅️ Volver al Perfil
+    <!-- Botones de acción -->
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-secondary">
+            ⬅️ Volver al Dashboard
+        </a>
+        <a href="{% url 'nuevo_pqr' %}" class="btn btn-blue-mid">
+            ➕ Crear PQR
         </a>
     </div>
 </div>
