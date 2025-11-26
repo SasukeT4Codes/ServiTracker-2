@@ -38,7 +38,16 @@
 
     <!-- Botones de acción -->
     <div class="d-flex justify-content-between mb-3">
-        <a href="{% url 'index' %}" class="btn btn-secondary">⬅ Volver</a>
+        {% if user.rol == "administrador" %}
+            <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary">⬅ Volver al Dashboard</a>
+        {% elif user.rol == "agente" %}
+            <a href="{% url 'dashboard_agente' %}" class="btn btn-secondary">⬅ Volver al Dashboard</a>
+        {% elif user.rol == "tecnico" %}
+            <a href="{% url 'dashboard_tecnico' %}" class="btn btn-secondary">⬅ Volver al Dashboard</a>
+        {% elif user.rol == "ciudadano" %}
+            <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-secondary">⬅ Volver al Dashboard</a>
+        {% endif %}
+
         <a href="{% url 'crear_usuario' %}" class="btn btn-blue-mid">➕ Crear nuevo usuario</a>
     </div>
 
