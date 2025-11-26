@@ -3,6 +3,8 @@
 
 {% block content %}
 <div class="container my-5">
+
+    <!-- Datos básicos -->
     <div class="card shadow-sm">
         <div class="card-header bg-blue-mid text-white">
             <h4 class="mb-0">Mi Perfil</h4>
@@ -14,43 +16,38 @@
                 <li class="list-group-item"><strong>Email:</strong> {{ usuario.email }}</li>
                 <li class="list-group-item"><strong>Rol:</strong> {{ usuario.get_rol_display }}</li>
             </ul>
-
-            <a href="{% url 'cambiar_contrasena' %}" class="btn btn-orange-dark w-100">
+            <a href="{% url 'cambiar_contrasena' %}" class="btn btn-orange-dark w-100 mb-3">
                 🔑 Cambiar contraseña
             </a>
+
+            <!-- Botones de navegación -->
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{% url 'mi_lista_pqr' %}" class="btn btn-blue-mid w-100 py-3">
+                        📋 Ver mis PQR
+                    </a>
+                </div>
+                <div class="col-md-6">
+                    <a href="{% url 'mis_propiedades' %}" class="btn btn-green-dark w-100 py-3">
+                        🏠 Ver mis Propiedades
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 
-    {% if usuario.rol == "ciudadano" %}
-    <div class="card shadow-sm mt-4">
-        <div class="card-header bg-blue-mid text-white">
-            <h5 class="mb-0">Mis Propiedades</h5>
-        </div>
-        <div class="card-body">
-            <ul class="list-group">
-                {% for propiedad in usuario.propiedades.all %}
-                    <li class="list-group-item">
-                        {{ propiedad.direccion }} — {{ propiedad.ciudad }}, {{ propiedad.departamento }}
-                        {% if not propiedad.activa %}
-                            <span class="badge bg-secondary">Inactiva</span>
-                        {% endif %}
-                    </li>
-                {% empty %}
-                    <li class="list-group-item">No tienes propiedades registradas.</li>
-                {% endfor %}
-            </ul>
-        </div>
+    <!-- Botón volver al dashboard -->
+    <div class="mt-4">
+        {% if usuario.rol == "administrador" %}
+            <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary w-100 py-3">⬅️ Volver al Dashboard</a>
+        {% elif usuario.rol == "agente" %}
+            <a href="{% url 'dashboard_agente' %}" class="btn btn-secondary w-100 py-3">⬅️ Volver al Dashboard</a>
+        {% elif usuario.rol == "tecnico" %}
+            <a href="{% url 'dashboard_tecnico' %}" class="btn btn-secondary w-100 py-3">⬅️ Volver al Dashboard</a>
+        {% elif usuario.rol == "ciudadano" %}
+            <a href="{% url 'dashboard_ciudadano' %}" class="btn btn-secondary w-100 py-3">⬅️ Volver al Dashboard</a>
+        {% endif %}
     </div>
 
-    <!-- Reutilizar la plantilla de mis PQR -->
-    <div class="card shadow-sm mt-4">
-        <div class="card-header bg-blue-mid text-white">
-            <h5 class="mb-0">Mis PQR</h5>
-        </div>
-        <div class="card-body">
-            {% include "pqr/mi-lista.html" %}
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock %}

@@ -4,7 +4,6 @@
 {% block content %}
 <div class="container my-5">
     <h2 class="text-blue-dark">Todas las propiedades registradas</h2>
-    <a href="{% url 'crear_propiedad' %}" class="btn btn-blue-mid mb-3">➕ Añadir propiedad</a>
 
     <table class="table table-striped">
         <thead>
@@ -36,11 +35,41 @@
         </tbody>
     </table>
 
-    <!-- Botón volver -->
-    <div class="mt-4">
-        <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary w-100 py-3">
-            ⬅️ Volver al Dashboard
-        </a>
+    <!-- Paginación -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if propiedades.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ propiedades.previous_page_number }}">Anterior</a>
+                </li>
+            {% endif %}
+
+            <li class="page-item disabled">
+                <span class="page-link">
+                    Página {{ propiedades.number }} de {{ propiedades.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if propiedades.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ propiedades.next_page_number }}">Siguiente</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <!-- Botones de acción -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <a href="{% url 'dashboard_admin' %}" class="btn btn-secondary w-100 py-3">
+                ⬅️ Volver al Dashboard
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'crear_propiedad' %}" class="btn btn-blue-mid w-100 py-3">
+                ➕ Añadir propiedad
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}

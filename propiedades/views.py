@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 from .models import Propiedad
 from .forms import PropiedadForm
 
 # 📋 Listar todas las propiedades (solo admin/staff)
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
 def lista_propiedades(request):
-    propiedades = Propiedad.objects.all()
+    propiedades_queryset = Propiedad.objects.all().order_by("ciudad")
+    paginator = Paginator(propiedades_queryset, 20)  # 20 propiedades por página
+    page_number = request.GET.get("page")
+    propiedades = paginator.get_page(page_number)
     return render(request, 'propiedades/propiedades.html', {'propiedades': propiedades})
 
 # ➕ Crear nueva propiedad (solo admin/staff)
@@ -46,7 +50,10 @@ def eliminar_propiedad(request, pk):
 # 🏠 Listar propiedades del ciudadano (solo el usuario autenticado)
 @login_required
 def mis_propiedades(request):
-    propiedades = Propiedad.objects.filter(usuario=request.user)
+    propiedades_queryset = Propiedad.objects.filter(usuario=request.user).order_by("ciudad")
+    paginator = Paginator(propiedades_queryset, 10)  # 10 propiedades por página
+    page_number = request.GET.get("page")
+    propiedades = paginator.get_page(page_number)
     return render(request, 'propiedades/mis_propiedades.html', {
         'propiedades': propiedades
     })
