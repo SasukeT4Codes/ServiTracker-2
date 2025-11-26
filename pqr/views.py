@@ -145,43 +145,6 @@ def cerrar_pqr(request, pk):
             return redirect('dashboard_admin')
     return render(request, 'pqr/cerrar.html', {'pqr': pqr})
 
-# 📊 Dashboard admin
-@user_passes_test(lambda u: u.rol == "administrador")
-def dashboard_admin(request):
-    pendientes = PQR.objects.filter(estado__nombre="Pendiente").count()
-    en_curso = PQR.objects.filter(estado__nombre="En curso").count()
-    resueltos = PQR.objects.filter(estado__nombre="Resuelto").count()
-
-    estadisticas_ciudad = {}
-    ciudades = Propiedad.objects.values("ciudad").distinct()
-    for c in ciudades:
-        ciudad = c["ciudad"]
-        estadisticas_ciudad[ciudad] = {
-            "pendientes": PQR.objects.filter(propiedad__ciudad=ciudad, estado__nombre="Pendiente").count(),
-            "resueltos": PQR.objects.filter(propiedad__ciudad=ciudad, estado__nombre="Resuelto").count(),
-        }
-
-    ciudad = request.GET.get("ciudad", "")
-    tipo_falla_id = request.GET.get("tipo_falla", "")
-    pqr_pendientes = PQR.objects.filter(estado__nombre="Pendiente")
-    if ciudad:
-        pqr_pendientes = pqr_pendientes.filter(propiedad__ciudad__icontains=ciudad)
-    if tipo_falla_id:
-        pqr_pendientes = pqr_pendientes.filter(tipo_falla_id=tipo_falla_id)
-
-    tipos_falla = TipoFalla.objects.all()
-
-    return render(request, "pqr/dashboard_admin.html", {
-        "pendientes": pendientes,
-        "en_curso": en_curso,
-        "resueltos": resueltos,
-        "estadisticas_ciudad": estadisticas_ciudad,
-        "pqr_pendientes": pqr_pendientes,
-        "ciudad": ciudad,
-        "tipo_falla_id": tipo_falla_id,
-        "tipos_falla": tipos_falla,
-    })
-
 
 # 📋 Detalle de PQR
 @login_required

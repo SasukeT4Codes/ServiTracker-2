@@ -41,8 +41,8 @@
         </a>
     </div>
     <div class="col-md-4">
-        <a href="{% url 'crear_usuario' %}" class="btn btn-orange-dark w-100 py-3 text-center">
-            ➕ Crear nuevo usuario
+        <a href="{% url 'lista_pqr_admin' %}" class="btn btn-orange-dark w-100 py-3 text-center">
+            📋 Gestionar PQR
         </a>
     </div>
     <div class="col-md-4">
@@ -79,64 +79,8 @@
 
 <hr>
 
-<!-- Filtros -->
-<h3 class="text-blue-mid">Filtrar PQR Pendientes</h3>
-<form method="get" class="row g-3 mb-4">
-    <div class="col-md-4">
-        <input type="text" name="ciudad" value="{{ ciudad }}" class="form-control" placeholder="Ciudad">
-    </div>
-    <div class="col-md-4">
-        <select name="tipo_falla" class="form-select">
-            <option value="">-- Tipo de falla --</option>
-            {% for falla in tipos_falla %}
-                <option value="{{ falla.id }}" {% if falla.id|stringformat:"s" == tipo_falla_id %}selected{% endif %}>
-                    {{ falla.nombre }}
-                </option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-4">
-        <button type="submit" class="btn btn-blue-mid w-100">Aplicar filtros</button>
-    </div>
-</form>
-
-<!-- Listado de PQR pendientes -->
-<h3 class="text-blue-mid">PQR Pendientes</h3>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Ubicación</th>
-            <th>Ciudadano</th>
-            <th>Tipo de falla</th>
-            <th>Descripción</th>
-            <th>Acción</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pqr in pqr_pendientes %}
-        <tr>
-            <td>{{ pqr.id }}</td>
-            <td>
-                <a href="{% url 'detalle_pqr' pqr.pk %}" class="text-blue-dark text-decoration-none">
-                    {{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}
-                </a>
-            </td>
-            <td>{{ pqr.ciudadano }}</td>
-            <td>{{ pqr.tipo_falla }}</td>
-            <td>{{ pqr.descripcion }}</td>
-            <td>
-                <a href="{% url 'asignar_tecnico' pqr.pk %}" class="btn btn-sm btn-blue-mid">Asignar técnico</a>
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="6">No hay PQR pendientes.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<!-- Listado de PQR no pendientes -->
-<h3 class="text-blue-mid">PQR Completadas / En curso / Urgentes</h3>
+<!-- PQR urgentes o pendientes -->
+<h3 class="text-blue-mid">PQR Urgentes / Pendientes</h3>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -149,9 +93,9 @@
         </tr>
     </thead>
     <tbody>
-        {% for pqr in pqr_no_pendientes %}
+        {% for pqr in pqr_urgentes %}
         <tr>
-            <td>{{ pqr.id }}</td>
+            <td><a href="{% url 'detalle_pqr' pqr.pk %}" class="text-decoration-none text-blue-dark">{{ pqr.id }}</a></td>
             <td>{{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}</td>
             <td>{{ pqr.ciudadano }}</td>
             <td>{{ pqr.tipo_falla }}</td>
@@ -159,17 +103,36 @@
             <td>{{ pqr.estado.nombre }}</td>
         </tr>
         {% empty %}
-        <tr><td colspan="6">No hay PQR completadas o en curso.</td></tr>
+        <tr><td colspan="6">No hay PQR urgentes ni pendientes.</td></tr>
         {% endfor %}
     </tbody>
 </table>
 
-<!-- Botón para ver todas las PQR -->
-<div class="mt-4">
-    <a href="{% url 'lista_todas_pqr' %}" class="btn btn-blue-dark w-100 py-3">
-        📋 Ver todas las PQR
-    </a>
-</div>
-
+<!-- PQR resueltas -->
+<h3 class="text-blue-mid">Últimas PQR Resueltas</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ubicación</th>
+            <th>Ciudadano</th>
+            <th>Tipo de falla</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in pqr_resueltas %}
+        <tr>
+            <td><a href="{% url 'detalle_pqr' pqr.pk %}" class="text-decoration-none text-blue-dark">{{ pqr.id }}</a></td>
+            <td>{{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}</td>
+            <td>{{ pqr.ciudadano }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.descripcion }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay PQR resueltas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}
