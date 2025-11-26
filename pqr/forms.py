@@ -24,3 +24,12 @@ class AsignarTecnicoForm(forms.ModelForm):
     class Meta:
         model = PQR
         fields = ['tecnico_asignado']
+
+# Formulario para administradores: asignar agente a un PQR
+class AsignarAgenteForm(forms.Form):
+    agente = forms.ModelChoiceField(
+        queryset=Usuario.objects.filter(rol="agente"),
+        required=True,
+        label="Seleccionar agente",
+        widget=forms.Select(attrs={'class': 'form-select'})
+    )

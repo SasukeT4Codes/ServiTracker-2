@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% block title %}Asignar Técnico{% endblock %}
+{% block title %}Asignar Agente{% endblock %}
 {% block content %}
-<h2 class="text-blue-dark">Asignar Técnico al PQR {{ pqr.id }}</h2>
+<h2 class="text-blue-dark">Asignar Agente al PQR {{ pqr.id }}</h2>
 <p><strong>Descripción:</strong> {{ pqr.descripcion }}</p>
 <p><strong>Propiedad:</strong> {{ pqr.propiedad }}</p>
 
@@ -9,6 +9,6 @@
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-blue-mid">Asignar</button>
-    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+    <a href="{% url 'index' %}" class="btn btn-secondary">Volver al inicio</a>
 </form>
 {% endblock %}

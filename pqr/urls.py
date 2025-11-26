@@ -18,6 +18,9 @@ urlpatterns = [
     # 🛠️ Agente/Admin: asignar técnico
     path('<int:pk>/asignar-tecnico/', views.asignar_tecnico, name='asignar_tecnico'),
 
+    # 🛠️ Admin: asignar agente
+    path('<int:pk>/asignar-agente/', views.asignar_agente, name='asignar_agente'),
+
     # ✅ Cerrar/Resolver PQR (técnico/agente/admin)
     path('<int:pk>/cerrar/', views.cerrar_pqr, name='cerrar_pqr'),
 

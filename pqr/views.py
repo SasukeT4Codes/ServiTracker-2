@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count
+from django.contrib.auth import get_user_model
 from .models import PQR, EstadoPQR, Propiedad, TipoFalla
-from .forms import PQRForm, AsignarTecnicoForm
+from .forms import PQRForm, AsignarTecnicoForm, AsignarAgenteForm
+
+Usuario = get_user_model()
 
 # 📋 Listar PQR del ciudadano
 @login_required
@@ -76,6 +79,23 @@ def asignar_tecnico(request, pk):
     else:
         form = AsignarTecnicoForm(instance=pqr)
     return render(request, 'pqr/asignar_tecnico.html', {'form': form, 'pqr': pqr})
+
+# 🛠️ Asignar agente (solo admin)
+@login_required
+def asignar_agente(request, pk):
+    if request.user.rol != "administrador":
+        return redirect('index')
+    pqr = get_object_or_404(PQR, pk=pk)
+    if request.method == "POST":
+        form = AsignarAgenteForm(request.POST)
+        if form.is_valid():
+            agente = form.cleaned_data["agente"]
+            pqr.agente_asignado = agente
+            pqr.save()
+            return redirect("dashboard_admin")
+    else:
+        form = AsignarAgenteForm()
+    return render(request, "pqr/asignar_agente.html", {"pqr": pqr, "form": form})
 
 # ✏️ Editar estado del PQR
 @login_required

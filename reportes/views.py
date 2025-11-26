@@ -51,7 +51,22 @@ def dashboard_admin(request):
 # 📊 Dashboard del agente
 @user_passes_test(lambda u: u.rol == "agente")
 def dashboard_agente(request):
-    # ... igual que tu versión, pero en reportes
+    # El agente gestiona PQR operativamente: ver pendientes y en curso
+    pqr_pendientes = PQR.objects.filter(estado__nombre="Pendiente")
+    pqr_en_curso = PQR.objects.filter(estado__nombre="En curso")
+
+    # Si quieres permitir filtro por ciudad desde la UI:
+    ciudad = request.GET.get("ciudad")
+    if ciudad:
+        pqr_pendientes = pqr_pendientes.filter(propiedad__ciudad__icontains=ciudad)
+        pqr_en_curso = pqr_en_curso.filter(propiedad__ciudad__icontains=ciudad)
+
+    contexto = {
+        "usuario": request.user,
+        "pqr_pendientes": pqr_pendientes,
+        "pqr_en_curso": pqr_en_curso,
+        "ciudad": ciudad or "",
+    }
     return render(request, 'reportes/dashboard_agente.html', contexto)
 
 
