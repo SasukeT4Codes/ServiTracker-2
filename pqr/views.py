@@ -2,23 +2,32 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count
 from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 from .models import PQR, EstadoPQR, Propiedad, TipoFalla
 from .forms import PQRForm, AsignarTecnicoForm, AsignarAgenteForm
 
 Usuario = get_user_model()
 
-# 📋 Listar PQR del ciudadano
+# 📋 Listar PQR del ciudadano (con paginación)
 @login_required
 def mi_lista_pqr(request):
-    pqr_list = PQR.objects.filter(ciudadano=request.user)
+    pqr_queryset = PQR.objects.filter(ciudadano=request.user).order_by("-id")
+    paginator = Paginator(pqr_queryset, 10)  # 10 PQR por página
+    page_number = request.GET.get("page")
+    pqr_list = paginator.get_page(page_number)
     return render(request, 'pqr/mi-lista.html', {'pqr_list': pqr_list})
 
-# 📋 Listar todos los PQR (solo admin/agente)
+# 📋 Listar todos los PQR (solo admin/agente, con paginación)
 @user_passes_test(lambda u: u.rol in ["agente", "administrador"])
 def lista_pqr_admin(request):
-    pqr_list = PQR.objects.all()
-    for pqr in pqr_list:
+    pqr_queryset = PQR.objects.all().order_by("-id")
+    for pqr in pqr_queryset:
         pqr.actualizar_estado_urgencia()
+
+    paginator = Paginator(pqr_queryset, 20)  # 20 PQR por página
+    page_number = request.GET.get("page")
+    pqr_list = paginator.get_page(page_number)
+
     return render(request, 'pqr/lista.html', {'pqr_list': pqr_list})
 
 # ➕ Crear nuevo PQR (ciudadano)
@@ -54,12 +63,15 @@ def editar_pqr(request, pk):
         form = PQRForm(instance=pqr)
     return render(request, 'pqr/editar.html', {'form': form})
 
-# 🔧 Vista para técnicos: Mis asignaciones
+# 🔧 Vista para técnicos: Mis asignaciones (con paginación)
 @login_required
 def mis_asignaciones(request):
     if request.user.rol != "tecnico":
         return redirect('index')
-    asignaciones = PQR.objects.filter(tecnico_asignado=request.user)
+    asignaciones_queryset = PQR.objects.filter(tecnico_asignado=request.user).order_by("-id")
+    paginator = Paginator(asignaciones_queryset, 10)  # 10 asignaciones por página
+    page_number = request.GET.get("page")
+    asignaciones = paginator.get_page(page_number)
     return render(request, 'pqr/mis_asignaciones.html', {'asignaciones': asignaciones})
 
 # 🛠️ Asignar técnico
@@ -170,17 +182,22 @@ def dashboard_admin(request):
         "tipos_falla": tipos_falla,
     })
 
+
 # 📋 Detalle de PQR
 @login_required
 @user_passes_test(lambda u: u.rol in ["agente", "administrador", "tecnico"])
 def detalle_pqr(request, pk):
     pqr = get_object_or_404(PQR, pk=pk)
+    # Actualizar urgencia si corresponde
     if pqr.estado.nombre in ["Pendiente", "Urgente", "Muy urgente"]:
         try:
             pqr.actualizar_estado_urgencia()
         except Exception:
             pass
+
+    # Solo agentes y administradores pueden ver lista de estados para cambiar
     estados = EstadoPQR.objects.all() if request.user.rol in ["agente", "administrador"] else []
+
     return render(request, 'pqr/detalle_pqr.html', {
         'pqr': pqr,
         'estados': estados,
