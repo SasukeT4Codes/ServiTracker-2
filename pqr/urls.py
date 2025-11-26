@@ -30,6 +30,9 @@ urlpatterns = [
     # 🔍 Ver los detalles del PQR
     path('<int:pk>/detalle/', views.detalle_pqr, name='detalle_pqr'),
 
+    # 📊 Lista de usuarios insistentes (solo agentes)
+    path('insistentes/', views.lista_insistentes, name='lista_insistentes'),
+
     # ⚡ PQR rápido (anónimo)
     path('rapido/', views.pqr_rapido, name='pqr_rapido'),
 ]
