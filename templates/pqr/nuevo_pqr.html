@@ -6,6 +6,23 @@
     <h2 class="text-blue-dark mb-4">Crear nuevo PQR</h2>
     <p class="lead">Selecciona una de tus propiedades y describe la falla.</p>
 
+    {% if error_message %}
+        <div class="alert alert-danger" role="alert">
+            ⚠️ {{ error_message }}
+        </div>
+    {% endif %}
+
+    {% if form.errors %}
+        <div class="alert alert-warning" role="alert">
+            Por favor corrige los siguientes errores:
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li>{{ field }}: {{ errors|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
     <form method="post" class="card shadow-sm p-4">
         {% csrf_token %}
         <div class="mb-3">
@@ -20,7 +37,12 @@
             <label for="id_descripcion" class="form-label">📝 Descripción</label>
             {{ form.descripcion }}
         </div>
-        <button type="submit" class="btn btn-blue-mid w-100">Guardar PQR</button>
+        <button type="submit" class="btn btn-blue-mid w-100 mb-3">Guardar PQR</button>
+
+        <!-- Botón volver al index -->
+        <a href="{% url 'index' %}" class="btn btn-secondary w-100 py-3">
+            ⬅️ Volver al Inicio
+        </a>
     </form>
 </div>
 {% endblock %}

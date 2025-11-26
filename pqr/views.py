@@ -3,7 +3,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Count
 from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator
-from .models import PQR, EstadoPQR, Propiedad, TipoFalla
+from django.utils import timezone
+from datetime import timedelta
+from django.core.exceptions import ValidationError
+
+from .models import PQR, EstadoPQR, Propiedad, TipoFalla, UsuarioInsistente
 from .forms import PQRForm, AsignarTecnicoForm, AsignarAgenteForm
 
 Usuario = get_user_model()
@@ -16,6 +20,7 @@ def mi_lista_pqr(request):
     page_number = request.GET.get("page")
     pqr_list = paginator.get_page(page_number)
     return render(request, 'pqr/mis_pqr.html', {'pqr_list': pqr_list})
+
 
 # 📋 Listar todos los PQR (solo admin/agente, con paginación)
 @user_passes_test(lambda u: u.rol in ["agente", "administrador"])
@@ -30,6 +35,7 @@ def lista_pqr_admin(request):
 
     return render(request, 'pqr/lista.html', {'pqr_list': pqr_list})
 
+
 # ➕ Crear nuevo PQR (ciudadano)
 @login_required
 def nuevo_pqr(request):
@@ -41,12 +47,22 @@ def nuevo_pqr(request):
             pqr.ciudadano = request.user
             estado_pendiente = EstadoPQR.objects.get(nombre="Pendiente")
             pqr.estado = estado_pendiente
-            pqr.save()
-            return redirect('mi_lista_pqr')
+
+            try:
+                pqr.full_clean()  # ejecuta validaciones del modelo (incluye clean)
+                pqr.save()
+                return redirect('mi_lista_pqr')
+            except ValidationError as e:
+                # Mostrar mensaje de error al ciudadano
+                return render(request, 'pqr/nuevo_pqr.html', {
+                    'form': form,
+                    'error_message': e.messages[0]
+                })
     else:
         form = PQRForm()
         form.fields['propiedad'].queryset = Propiedad.objects.filter(usuario=request.user)
     return render(request, 'pqr/nuevo_pqr.html', {'form': form})
+
 
 # ✏️ Editar PQR (solo si está pendiente)
 @login_required
@@ -63,6 +79,7 @@ def editar_pqr(request, pk):
         form = PQRForm(instance=pqr)
     return render(request, 'pqr/editar.html', {'form': form})
 
+
 # 🔧 Vista para técnicos: Mis asignaciones (con paginación)
 @login_required
 def mis_asignaciones(request):
@@ -73,6 +90,7 @@ def mis_asignaciones(request):
     page_number = request.GET.get("page")
     asignaciones = paginator.get_page(page_number)
     return render(request, 'pqr/mis_asignaciones.html', {'asignaciones': asignaciones})
+
 
 # 🛠️ Asignar técnico
 @login_required
@@ -92,6 +110,7 @@ def asignar_tecnico(request, pk):
         form = AsignarTecnicoForm(instance=pqr)
     return render(request, 'pqr/asignar_tecnico.html', {'form': form, 'pqr': pqr})
 
+
 # 🛠️ Asignar agente (solo admin)
 @login_required
 def asignar_agente(request, pk):
@@ -108,6 +127,7 @@ def asignar_agente(request, pk):
     else:
         form = AsignarAgenteForm()
     return render(request, "pqr/asignar_agente.html", {"pqr": pqr, "form": form})
+
 
 # ✏️ Editar estado del PQR
 @login_required
@@ -126,6 +146,7 @@ def editar_estado_pqr(request, pk):
         "pqr": pqr,
         "estados": estados,
     })
+
 
 # ✅ Cerrar PQR
 @login_required
@@ -165,3 +186,11 @@ def detalle_pqr(request, pk):
         'pqr': pqr,
         'estados': estados,
     })
+
+
+# 📊 Lista de usuarios insistentes (solo agentes)
+@user_passes_test(lambda u: u.rol == "agente")
+def lista_insistentes(request):
+    limite = timezone.now() - timedelta(days=30)
+    insistentes = UsuarioInsistente.objects.filter(fecha_intento__gte=limite).select_related("usuario", "propiedad")
+    return render(request, "pqr/lista_insistentes.html", {"insistentes": insistentes})
