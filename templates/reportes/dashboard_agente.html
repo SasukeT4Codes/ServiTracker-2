@@ -59,7 +59,7 @@
 
 <hr>
 
-<!-- Listado de PQR pendientes -->
+<!-- PQR urgentes o pendientes -->
 <h3 class="text-blue-mid">PQR Pendientes</h3>
 <table class="table table-striped">
     <thead>
@@ -90,6 +90,64 @@
         </tr>
         {% empty %}
         <tr><td colspan="6">No hay PQR pendientes.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<!-- PQR en curso (solo las asignadas por este agente) -->
+<h3 class="text-blue-mid">PQR en Curso</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ubicación</th>
+            <th>Técnico asignado</th>
+            <th>Tipo de falla</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in pqr_en_curso %}
+        <tr>
+            <td><a href="{% url 'detalle_pqr' pqr.pk %}" class="text-blue-dark text-decoration-none">{{ pqr.id }}</a></td>
+            <td>{{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}</td>
+            <td>{{ pqr.tecnico_asignado }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.estado.nombre }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay PQR en curso asignadas por ti.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<hr>
+
+<!-- Últimas PQR resueltas (solo las asignadas por este agente) -->
+<h3 class="text-blue-mid">Últimas PQR Resueltas</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ubicación</th>
+            <th>Ciudadano</th>
+            <th>Tipo de falla</th>
+            <th>Descripción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pqr in pqr_resueltas %}
+        <tr>
+            <td><a href="{% url 'detalle_pqr' pqr.pk %}" class="text-blue-dark text-decoration-none">{{ pqr.id }}</a></td>
+            <td>{{ pqr.propiedad.departamento }} - {{ pqr.propiedad.ciudad }}</td>
+            <td>{{ pqr.ciudadano }}</td>
+            <td>{{ pqr.tipo_falla }}</td>
+            <td>{{ pqr.descripcion }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">No hay PQR resueltas asignadas por ti.</td></tr>
         {% endfor %}
     </tbody>
 </table>
