@@ -29,4 +29,7 @@ urlpatterns = [
 
     # 🔍 Ver los detalles del PQR
     path('<int:pk>/detalle/', views.detalle_pqr, name='detalle_pqr'),
+
+    # ⚡ PQR rápido (anónimo)
+    path('rapido/', views.pqr_rapido, name='pqr_rapido'),
 ]

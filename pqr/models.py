@@ -49,15 +49,17 @@ class PQR(models.Model):
         null=True,
         blank=True
     )
-    tipo_falla = models.ForeignKey(
-        TipoFalla,
-        on_delete=models.PROTECT
-    )
+
+    # 🔄 Campos para PQR rápido (cuando no hay propiedad registrada)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
+    departamento = models.CharField(max_length=100, blank=True, null=True)
+    ciudad = models.CharField(max_length=100, blank=True, null=True)
+    telefono_contacto = models.CharField(max_length=20, unique=True, null=True, blank=True)
+
+    tipo_falla = models.ForeignKey(TipoFalla, on_delete=models.PROTECT)
     descripcion = models.TextField()
-    estado = models.ForeignKey(
-        EstadoPQR,
-        on_delete=models.PROTECT
-    )
+    estado = models.ForeignKey(EstadoPQR, on_delete=models.PROTECT)
+
     tecnico_asignado = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -65,7 +67,6 @@ class PQR(models.Model):
         blank=True,
         related_name="pqrs_tecnico"
     )
-    # 🔑 nuevo campo: agente revisor
     agente_revisor = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -81,12 +82,9 @@ class PQR(models.Model):
         return f"PQR #{self.id} - {self.tipo_falla.nombre} ({self.estado.nombre})"
 
     def clean(self):
-        # Validar que exista ciudadano y propiedad para aplicar la regla
+        # Validar que exista ciudadano y propiedad para aplicar la regla de máximo 3 activas
         if self.ciudadano and self.propiedad:
-            # Considerar activas: Pendiente + En curso (y también niveles de urgencia si aplican esos estados)
             estados_activos = ["Pendiente", "En curso", "Urgente", "Muy urgente"]
-
-            # Excluir el propio registro cuando es edición (self.pk) para no contar doble
             qs = PQR.objects.filter(
                 ciudadano=self.ciudadano,
                 propiedad=self.propiedad,
@@ -96,16 +94,18 @@ class PQR(models.Model):
                 qs = qs.exclude(pk=self.pk)
 
             activas = qs.count()
-
             if activas >= 3:
-                # Registrar trigger interno
                 UsuarioInsistente.objects.create(
                     usuario=self.ciudadano,
                     propiedad=self.propiedad,
                     total_activas_en_intento=activas
                 )
-                # Bloquear creación/edición
                 raise ValidationError("No puedes tener más de 3 PQR activas para la misma propiedad.")
+
+        # Validar que el teléfono de contacto sea único si se usa
+        if self.telefono_contacto:
+            if PQR.objects.filter(telefono_contacto=self.telefono_contacto).exclude(pk=self.pk).exists():
+                raise ValidationError("Este número de teléfono ya está registrado en otro PQR.")
 
     def actualizar_estado_urgencia(self):
         if self.estado.nombre == "Pendiente":

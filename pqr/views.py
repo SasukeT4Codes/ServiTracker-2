@@ -8,7 +8,7 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 
 from .models import PQR, EstadoPQR, Propiedad, TipoFalla, UsuarioInsistente
-from .forms import PQRForm, AsignarTecnicoForm, AsignarAgenteForm
+from .forms import PQRForm, AsignarTecnicoForm, AsignarAgenteForm, PQRAnonimoForm
 
 Usuario = get_user_model()
 
@@ -194,3 +194,19 @@ def lista_insistentes(request):
     limite = timezone.now() - timedelta(days=30)
     insistentes = UsuarioInsistente.objects.filter(fecha_intento__gte=limite).select_related("usuario", "propiedad")
     return render(request, "pqr/lista_insistentes.html", {"insistentes": insistentes})
+
+
+
+def pqr_rapido(request):
+    if request.method == 'POST':
+        form = PQRAnonimoForm(request.POST)
+        if form.is_valid():
+            pqr = form.save(commit=False)
+            pqr.ciudadano = None  # usuario anónimo
+            estado_pendiente = EstadoPQR.objects.get(nombre="Pendiente")
+            pqr.estado = estado_pendiente
+            pqr.save()
+            return redirect('index')
+    else:
+        form = PQRAnonimoForm()
+    return render(request, 'pqr/pqr_rapido.html', {'form': form})

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}PQR Rápido | ServiTracker{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2 class="text-blue-dark mb-4">⚡ Crear PQR Rápido</h2>
+    <p class="lead">Completa los datos básicos para reportar la falla. No necesitas iniciar sesión.</p>
+
+    <!-- Mostrar errores -->
+    {% if error_message %}
+        <div class="alert alert-danger" role="alert">
+            ⚠️ {{ error_message }}
+        </div>
+    {% endif %}
+
+    {% if form.errors %}
+        <div class="alert alert-warning" role="alert">
+            Por favor corrige los siguientes errores:
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    <li><strong>{{ field|capfirst }}:</strong> {{ errors|join:", " }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <!-- Formulario -->
+    <form method="post" class="card shadow-sm p-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_departamento" class="form-label">📍 Departamento</label>
+            {{ form.departamento }}
+        </div>
+        <div class="mb-3">
+            <label for="id_ciudad" class="form-label">🏙️ Ciudad</label>
+            {{ form.ciudad }}
+        </div>
+        <div class="mb-3">
+            <label for="id_direccion" class="form-label">🏠 Dirección</label>
+            {{ form.direccion }}
+        </div>
+        <div class="mb-3">
+            <label for="id_tipo_falla" class="form-label">⚡ Tipo de falla</label>
+            {{ form.tipo_falla }}
+        </div>
+        <div class="mb-3">
+            <label for="id_descripcion" class="form-label">📝 Descripción</label>
+            {{ form.descripcion }}
+        </div>
+        <div class="mb-3">
+            <label for="id_telefono_contacto" class="form-label">📞 Teléfono de contacto</label>
+            {{ form.telefono_contacto }}
+            <small class="form-text text-muted">
+                Este número debe ser único y servirá para contactarte en caso de problemas.
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-orange-dark w-100 mb-3">Enviar PQR Rápido</button>
+        <a href="{% url 'index' %}" class="btn btn-secondary w-100 py-3">⬅️ Volver al Inicio</a>
+    </form>
+</div>
+{% endblock %}

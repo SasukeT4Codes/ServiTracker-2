@@ -96,7 +96,8 @@
         <p class="lead position-relative" style="z-index:1;">Reporta fallas en el servicio eléctrico de forma rápida y sencilla.</p>
         <div class="d-flex justify-content-center gap-3 mt-3 position-relative" style="z-index:1;">
             <a href="{% url 'login' %}" class="btn btn-blue-mid">🔐 Iniciar sesión</a>
-            <a href="{% url 'nuevo_pqr' %}" class="btn btn-orange-dark">⚡ PQR rápida</a>
+            <!-- 🔧 corregido: apuntar a pqr_rapido -->
+            <a href="{% url 'pqr_rapido' %}" class="btn btn-orange-dark">⚡ PQR rápida</a>
         </div>
     {% endif %}
 </section>
