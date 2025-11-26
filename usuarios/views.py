@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.core.paginator import Paginator
 from .forms import (
     RegistroForm,
     LoginForm,
@@ -25,7 +26,7 @@ def index(request):
         elif request.user.rol == "tecnico":
             contexto["asignaciones"] = PQR.objects.filter(tecnico_asignado=request.user).order_by("-id")[:5]
 
-        elif request.user.rol == "agente" or request.user.rol == "administrador" or request.user.is_staff:
+        elif request.user.rol in ["agente", "administrador"] or request.user.is_staff:
             contexto["pendientes"] = PQR.objects.filter(estado__nombre="Pendiente").count()
             contexto["en_curso"] = PQR.objects.filter(estado__nombre="En curso").count()
             contexto["resueltos"] = PQR.objects.filter(estado__nombre="Resuelto").count()
@@ -80,7 +81,6 @@ def perfil(request):
         "pqr_list": pqr_list,
     })
 
-
 # 📊 Dashboard del ciudadano
 @login_required
 def dashboard_ciudadano(request):
@@ -94,10 +94,13 @@ def dashboard_ciudadano(request):
         "pqr": pqr,
     })
 
-# 📋 Vista para listar usuarios
+# 📋 Vista para listar usuarios con paginación
 @user_passes_test(lambda u: u.is_staff or u.rol == "administrador")
 def lista_usuarios(request):
-    usuarios = Usuario.objects.all()
+    usuarios_list = Usuario.objects.all().order_by("documento")
+    paginator = Paginator(usuarios_list, 20)  # 20 usuarios por página
+    page_number = request.GET.get("page")
+    usuarios = paginator.get_page(page_number)
     return render(request, 'usuarios/lista_usuarios.html', {'usuarios': usuarios})
 
 # ➕ Vista para crear usuarios

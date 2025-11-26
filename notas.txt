@@ -1,7 +1,7 @@
 
-Superusuario - - - -
+Superusuario ( admin ) - - - -
 
-User: admin 90012345
+User: 90012345
 Correo: admin@essa.com
 Contraseña: lemonmeloncookie
 
@@ -11,3 +11,19 @@ python manage.py loaddata pqr/fixtures/estados_pqr.json
 python manage.py loaddata pqr/fixtures/tipos_falla.json
 
 python manage.py createsuperuser --documento 90012345
+
+
+Agente - - - -
+
+1212121212
+1212121212
+
+Tecnico - - - -
+
+3434343434
+3434343434
+
+Ciudadano - - - -
+
+5656565656
+5656565656
